@@ -15,3 +15,9 @@ export interface ApiErrorResponse {
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+}
+

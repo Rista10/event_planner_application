@@ -16,10 +16,15 @@ async function startServer(): Promise<void> {
             });
         });
     } catch (error) {
+        const errMsg =
+            error instanceof Error ? error.message : typeof error === 'object' ? JSON.stringify(error) : String(error);
+        const errStack = error instanceof Error ? error.stack : undefined;
         logger.error({
             message: 'Failed to start server',
-            error: error instanceof Error ? error.message : String(error),
+            error: errMsg || 'Unknown error',
+            stack: errStack,
         });
+        console.error('Failed to start server:', error);
         process.exit(1);
     }
 }

@@ -13,7 +13,7 @@ const api = axios.create({
 // Request interceptor — attach auth token
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('accessToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -40,12 +40,12 @@ api.interceptors.response.use(
                 );
 
                 if (data.success && data.data) {
-                    localStorage.setItem('accessToken', data.data.accessToken);
+                    sessionStorage.setItem('accessToken', data.data.accessToken);
                     originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
                     return api(originalRequest);
                 }
             } catch {
-                localStorage.removeItem('accessToken');
+                sessionStorage.removeItem('accessToken');
                 window.location.href = '/login';
             }
         }
