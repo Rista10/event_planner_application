@@ -7,11 +7,13 @@ import swaggerUi from 'swagger-ui-express';
 import { errorHandler } from './middleware/errorHandler.js';
 import { ApiSuccessResponse } from './shared/types/index.js';
 import authRoutes from './modules/auth/routes.js';
+import tagRoutes from './modules/tags/routes.js';
+import eventRoutes from './modules/events/routes.js';
 import { swaggerSpec } from './config/swagger.js';
 
 const app = express();
 
-// Security middleware (CSP relaxed for Swagger UI at /api-docs)
+// Security middleware
 app.use(
     helmet({
         contentSecurityPolicy: {
@@ -51,12 +53,10 @@ app.get('/api/health', (_req, res) => {
   res.json(response);
 });
 
-// TODO: Mount route modules here
-// app.use('/api/events', eventRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/tags', tagRoutes);
+app.use('/api/events', eventRoutes);
 
-
-// Global error handler (must be last)
 app.use(errorHandler);
 
 export default app;
