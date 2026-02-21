@@ -59,7 +59,7 @@ export function AppLayout(): ReactNode {
             color: '#1a1a1a',
             letterSpacing: '-0.3px',
           }}
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/events')}
         >
           EventPlanner
         </Text>
