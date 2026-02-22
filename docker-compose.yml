@@ -27,23 +27,12 @@ services:
       dockerfile: Dockerfile
     container_name: event_planner_backend
     restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: mysql
     ports:
       - "3000:3000"
-    environment:
-      PORT: 3000
-      NODE_ENV: development
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: event_user
-      DB_PASSWORD: event_password
-      DB_NAME: event_planner
-      JWT_SECRET: dev-jwt-secret-change-in-production
-      JWT_REFRESH_SECRET: dev-jwt-refresh-secret-change-in-production
-      JWT_ACCESS_EXPIRY: 15m
-      JWT_REFRESH_EXPIRY: 7d
-      BCRYPT_SALT_ROUNDS: 10
-      FEATURE_RSVP: "false"
-      FEATURE_2FA: "false"
     depends_on:
       mysql:
         condition: service_healthy
