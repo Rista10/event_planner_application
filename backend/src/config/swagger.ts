@@ -160,6 +160,201 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
+      '/api/auth/verify-email': {
+        post: {
+          summary: 'Verify email address',
+          description: 'Verifies a user email using the token sent via email',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['token'],
+                  properties: {
+                    token: { type: 'string', description: 'Email verification token' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Email verified successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/MessageResponse' },
+                },
+              },
+            },
+            400: { description: 'Invalid or expired token' },
+          },
+        },
+      },
+      '/api/auth/resend-verification': {
+        post: {
+          summary: 'Resend verification email',
+          description: 'Resends the email verification link to the given email address',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['email'],
+                  properties: {
+                    email: { type: 'string', format: 'email' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Verification email sent (if account exists)',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/MessageResponse' },
+                },
+              },
+            },
+            400: { description: 'Validation error' },
+          },
+        },
+      },
+      '/api/auth/forgot-password': {
+        post: {
+          summary: 'Request password reset',
+          description: 'Sends a password reset link to the given email address',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['email'],
+                  properties: {
+                    email: { type: 'string', format: 'email' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Reset email sent (if account exists)',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/MessageResponse' },
+                },
+              },
+            },
+            400: { description: 'Validation error' },
+          },
+        },
+      },
+      '/api/auth/reset-password': {
+        post: {
+          summary: 'Reset password',
+          description: 'Resets the user password using a valid reset token',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['token', 'newPassword'],
+                  properties: {
+                    token: { type: 'string', description: 'Password reset token' },
+                    newPassword: { type: 'string', minLength: 8, maxLength: 128 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Password reset successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/MessageResponse' },
+                },
+              },
+            },
+            400: { description: 'Invalid or expired token' },
+          },
+        },
+      },
+      '/api/auth/verify-2fa': {
+        post: {
+          summary: 'Verify two-factor authentication',
+          description: 'Verifies the 2FA OTP code and completes login',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['userId', 'otp'],
+                  properties: {
+                    userId: { type: 'string', format: 'uuid' },
+                    otp: { type: 'string', minLength: 6, maxLength: 6, example: '123456' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: '2FA verified, login complete',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/AuthResponse' },
+                },
+              },
+            },
+            400: { description: 'Invalid or expired OTP' },
+          },
+        },
+      },
+      '/api/auth/2fa': {
+        post: {
+          summary: 'Enable or disable 2FA',
+          description: 'Toggles two-factor authentication for the authenticated user',
+          tags: ['Auth'],
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['enable'],
+                  properties: {
+                    enable: { type: 'boolean', description: 'Set to true to enable 2FA, false to disable' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: '2FA setting updated',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/MessageResponse' },
+                },
+              },
+            },
+            401: { description: 'Not authenticated' },
+          },
+        },
+      },
       '/api/tags': {
         get: {
           summary: 'Get all tags',
@@ -495,6 +690,19 @@ const options: swaggerJsdoc.Options = {
                 message: { type: 'string' },
               },
             },
+          },
+        },
+        MessageResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: true },
+            data: {
+              type: 'object',
+              properties: {
+                message: { type: 'string', example: 'Operation completed successfully' },
+              },
+            },
+            error: { type: 'null' },
           },
         },
         Tag: {

@@ -25,3 +25,24 @@ export async function findByEmail(email: string): Promise<UserRow | undefined> {
 export async function findById(id: string): Promise<UserRow | undefined> {
   return db(TABLE).where('id', id).first<UserRow>();
 }
+
+export async function updateEmailVerified(id: string, verified: boolean): Promise<void> {
+  await db(TABLE).where('id', id).update({
+    is_email_verified: verified,
+    updated_at: new Date(),
+  });
+}
+
+export async function updateTwoFactorEnabled(id: string, enabled: boolean): Promise<void> {
+  await db(TABLE).where('id', id).update({
+    two_factor_enabled: enabled,
+    updated_at: new Date(),
+  });
+}
+
+export async function updatePassword(id: string, hashedPassword: string): Promise<void> {
+  await db(TABLE).where('id', id).update({
+    password: hashedPassword,
+    updated_at: new Date(),
+  });
+}

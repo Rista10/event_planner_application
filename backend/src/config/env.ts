@@ -28,6 +28,17 @@ const envSchema = z.object({
         .string()
         .default('false')
         .transform((val) => val === 'true'),
+
+    // Email configuration (optional - emails will be skipped if not configured)
+    SMTP_USER: z.string().default(''),
+    SMTP_PASS: z.string().default(''),
+    EMAIL_FROM: z.string().default('noreply@example.com'),
+    FRONTEND_URL: z.string().default('http://localhost:5173'),
+
+    // Token expiry configuration (in minutes)
+    EMAIL_VERIFICATION_EXPIRY_MINUTES: z.coerce.number().default(1440), // 24 hours
+    PASSWORD_RESET_EXPIRY_MINUTES: z.coerce.number().default(60), // 1 hour
+    TWO_FACTOR_EXPIRY_MINUTES: z.coerce.number().default(10), // 10 minutes
 });
 
 const parsed = envSchema.safeParse(process.env);
