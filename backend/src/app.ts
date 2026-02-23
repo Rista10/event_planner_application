@@ -9,6 +9,7 @@ import { ApiSuccessResponse } from './shared/types/index.js';
 import authRoutes from './modules/auth/routes.js';
 import tagRoutes from './modules/tags/routes.js';
 import eventRoutes from './modules/events/routes.js';
+import rsvpRoutes from './modules/rsvps/routes.js';
 import { swaggerSpec } from './config/swagger.js';
 
 const app = express();
@@ -56,6 +57,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/rsvps', rsvpRoutes);
 
 app.use(errorHandler);
 

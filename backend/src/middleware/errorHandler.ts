@@ -45,6 +45,28 @@ export function errorHandler(
     return;
   }
 
+  if (err instanceof SyntaxError && (err as any).status === 400 && 'body' in err) {
+    logger.warn({
+      message: err.message,
+      code: 'INVALID_JSON',
+      statusCode: 400,
+      requestId,
+      path: req.path,
+    });
+
+    const response: ApiErrorResponse = {
+      success: false,
+      data: null,
+      error: {
+        code: 'INVALID_JSON',
+        message: 'Invalid JSON payload received',
+      },
+    };
+
+    res.status(400).json(response);
+    return;
+  }
+
   logger.error({
     message: err.message,
     stack: env.NODE_ENV === 'development' ? err.stack : undefined,

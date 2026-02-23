@@ -9,6 +9,7 @@ export async function listEvents(
 ): Promise<PaginatedResult<EventWithTags>> {
   const { items, total } = await eventRepository.findAll(filters, pagination);
 
+
   return {
     items,
     total,

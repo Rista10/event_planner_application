@@ -39,7 +39,6 @@ export async function getById(req: Request, res: Response, next: NextFunction): 
     if (!id) {
       throw new AppError('Event ID is required', 400, 'VALIDATION_ERROR');
     }
-
     const event = await eventService.getEventById(id);
 
     const response: ApiSuccessResponse<EventWithTags> = {

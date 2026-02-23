@@ -647,6 +647,163 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
+      '/api/rsvps/event/{eventId}': {
+        post: {
+          summary: 'RSVP to event',
+          description: 'Create or update RSVP for an event',
+          tags: ['RSVPs'],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'eventId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string', format: 'uuid' },
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['response'],
+                  properties: {
+                    response: { type: 'string', enum: ['YES', 'NO', 'MAYBE'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'RSVP recorded',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/Rsvp' },
+                      error: { type: 'null' },
+                    },
+                  },
+                },
+              },
+            },
+            403: { description: 'No access to private event' },
+          },
+        },
+        get: {
+          summary: 'Get RSVPs for event',
+          description: 'Get all RSVPs for an event (event owner only)',
+          tags: ['RSVPs'],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'eventId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string', format: 'uuid' },
+            },
+            {
+              name: 'response',
+              in: 'query',
+              schema: { type: 'string', enum: ['YES', 'NO', 'MAYBE'] },
+            },
+            { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+            { name: 'limit', in: 'query', schema: { type: 'integer', default: 20 } },
+          ],
+          responses: {
+            200: { description: 'List of RSVPs' },
+            403: { description: 'Not event owner' },
+          },
+        },
+        delete: {
+          summary: 'Cancel RSVP',
+          description: 'Cancel your RSVP for an event',
+          tags: ['RSVPs'],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'eventId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string', format: 'uuid' },
+            },
+          ],
+          responses: {
+            200: { description: 'RSVP cancelled' },
+          },
+        },
+      },
+      '/api/rsvps/event/{eventId}/me': {
+        get: {
+          summary: 'Get my RSVP',
+          description: 'Get your RSVP for a specific event',
+          tags: ['RSVPs'],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              name: 'eventId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string', format: 'uuid' },
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Your RSVP or null',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean', example: true },
+                      data: {
+                        oneOf: [{ $ref: '#/components/schemas/Rsvp' }, { type: 'null' }],
+                      },
+                      error: { type: 'null' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/rsvps/event/{eventId}/summary': {
+        get: {
+          summary: 'Get RSVP summary',
+          description: 'Get RSVP counts for an event (public)',
+          tags: ['RSVPs'],
+          parameters: [
+            {
+              name: 'eventId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string', format: 'uuid' },
+            },
+          ],
+          responses: {
+            200: {
+              description: 'RSVP summary',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/RsvpSummary' },
+                      error: { type: 'null' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {
@@ -737,6 +894,44 @@ const options: swaggerJsdoc.Options = {
             page: { type: 'integer' },
             limit: { type: 'integer' },
             totalPages: { type: 'integer' },
+          },
+        },
+        Invitation: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+            event_id: { type: 'string', format: 'uuid' },
+            inviter_id: { type: 'string', format: 'uuid' },
+            invitee_id: { type: 'string', format: 'uuid', nullable: true },
+            invitee_email: { type: 'string', format: 'email' },
+            status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'DECLINED'] },
+            event_title: { type: 'string' },
+            inviter_name: { type: 'string' },
+            invitee_name: { type: 'string', nullable: true },
+            created_at: { type: 'string', format: 'date-time' },
+            updated_at: { type: 'string', format: 'date-time' },
+          },
+        },
+        Rsvp: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+            event_id: { type: 'string', format: 'uuid' },
+            user_id: { type: 'string', format: 'uuid' },
+            response: { type: 'string', enum: ['YES', 'NO', 'MAYBE'] },
+            user_name: { type: 'string' },
+            user_email: { type: 'string', format: 'email' },
+            created_at: { type: 'string', format: 'date-time' },
+            updated_at: { type: 'string', format: 'date-time' },
+          },
+        },
+        RsvpSummary: {
+          type: 'object',
+          properties: {
+            yes: { type: 'integer' },
+            no: { type: 'integer' },
+            maybe: { type: 'integer' },
+            total: { type: 'integer' },
           },
         },
       },
