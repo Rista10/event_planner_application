@@ -4,6 +4,10 @@ import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import { SignupPage } from './modules/auth/SignupPage';
 import { LoginPage } from './modules/auth/LoginPage';
+import { CheckEmailPage } from './modules/auth/CheckEmailPage';
+import { VerifyEmailPage } from './modules/auth/VerifyEmailPage';
+import { ForgotPasswordPage } from './modules/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from './modules/auth/ResetPasswordPage';
 import { AuthProvider } from './hooks/useAuth';
 import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -25,10 +29,14 @@ function App() {
         <AuthProvider>
           <AntApp>
             <BrowserRouter>
-              <Toaster position="top-right" />
+              <Toaster position="bottom-right" />
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/check-email" element={<CheckEmailPage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<Navigate to="/events" replace />} />

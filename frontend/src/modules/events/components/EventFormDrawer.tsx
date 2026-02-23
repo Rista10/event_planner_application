@@ -103,12 +103,12 @@ export function EventFormDrawer({ open, eventId, onClose, onSuccess }: EventForm
   return (
     <Drawer
       title={
-        <Title level={4} style={{ margin: 0 }}>
+        <Title level={4} className="m-0">
           {isEdit ? 'Edit Event' : 'Create New Event'}
         </Title>
       }
       placement="right"
-      width={520}
+      size="large"
       onClose={handleClose}
       open={open}
       destroyOnClose
@@ -117,7 +117,7 @@ export function EventFormDrawer({ open, eventId, onClose, onSuccess }: EventForm
       }
     >
       {fetchingEvent ? (
-        <div style={{ textAlign: 'center', padding: 48 }}>
+        <div className="text-center py-12">
           <Spin size="large" />
         </div>
       ) : (
@@ -147,7 +147,7 @@ export function EventFormDrawer({ open, eventId, onClose, onSuccess }: EventForm
             <DatePicker
               showTime
               format="YYYY-MM-DD HH:mm"
-              style={{ width: '100%' }}
+              className="w-full"
               placeholder="Select date and time"
             />
           </Form.Item>
@@ -171,7 +171,7 @@ export function EventFormDrawer({ open, eventId, onClose, onSuccess }: EventForm
             />
           </Form.Item>
 
-          <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
+          <Form.Item className="mb-0 mt-6">
             <Button type="primary" htmlType="submit" loading={loading} block size="large">
               {isEdit ? 'Update Event' : 'Create Event'}
             </Button>

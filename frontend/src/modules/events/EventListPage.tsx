@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 import {
-  List,
   Tag,
   Space,
   Input,
@@ -62,94 +61,80 @@ export function EventListPage(): ReactNode {
   const isUpcoming = (dateStr: string): boolean => new Date(dateStr) >= new Date();
 
   const renderEventCard = (event: EventItem): ReactNode => (
-    <List.Item key={event.id} style={{ padding: '6px 0' }}>
+    <div key={event.id} className="py-[6px] px-0">
       <div
         onClick={() => navigate(`/events/${event.id}`)}
-        style={{
-          width: '100%',
-          padding: '16px 20px',
-          background: '#fff',
-          border: '1px solid #eee',
-          borderRadius: 8,
-          cursor: 'pointer',
-          transition: 'border-color 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.borderColor = '#d0d0d0';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLDivElement).style.borderColor = '#eee';
-        }}
+        className="w-full px-5 py-4 bg-white border border-[#eee] rounded-lg cursor-pointer transition-colors duration-200 hover:border-[#d0d0d0]"
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 4 }}>
+        <div className="flex justify-between items-start gap-3">
+          <div className="flex-1 min-w-0">
+            <Text strong className="text-[15px] block mb-1">
               {event.title}
             </Text>
             {event.description && (
               <Paragraph
                 ellipsis={{ rows: 1 }}
-                style={{ margin: '0 0 8px', color: '#888', fontSize: 13 }}
+                className="m-0 mb-2 text-[#888] text-[13px]"
               >
                 {event.description}
               </Paragraph>
             )}
             <Space size={16} wrap>
-              <Text type="secondary" style={{ fontSize: 13 }}>
-                <CalendarOutlined style={{ marginRight: 4 }} />
+              <Text type="secondary" className="text-[13px]">
+                <CalendarOutlined className="mr-1" />
                 {formatDate(event.date_time)}
               </Text>
               {event.location && (
-                <Text type="secondary" style={{ fontSize: 13 }}>
-                  <EnvironmentOutlined style={{ marginRight: 4 }} />
+                <Text type="secondary" className="text-[13px]">
+                  <EnvironmentOutlined className="mr-1" />
                   {event.location}
                 </Text>
               )}
-              <Text type="secondary" style={{ fontSize: 13 }}>
-                <UserOutlined style={{ marginRight: 4 }} />
+              <Text type="secondary" className="text-[13px]">
+                <UserOutlined className="mr-1" />
                 {event.creator_name}
               </Text>
             </Space>
           </div>
 
-          <Space size={4} style={{ flexShrink: 0 }}>
+          <Space size={4} className="shrink-0">
             {event.is_public ? (
-              <Tag color="green" style={{ margin: 0 }}>Public</Tag>
+              <Tag color="green" className="m-0">Public</Tag>
             ) : (
-              <Tag color="orange" style={{ margin: 0 }}>Private</Tag>
+              <Tag color="orange" className="m-0">Private</Tag>
             )}
             {isUpcoming(event.date_time) ? (
-              <Tag color="blue" style={{ margin: 0 }}>Upcoming</Tag>
+              <Tag color="blue" className="m-0">Upcoming</Tag>
             ) : (
-              <Tag style={{ margin: 0 }}>Past</Tag>
+              <Tag className="m-0">Past</Tag>
             )}
           </Space>
         </div>
 
         {event.tags.length > 0 && (
-          <div style={{ marginTop: 10 }}>
+          <div className="mt-[10px]">
             {event.tags.map((tag) => (
-              <Tag key={tag.id} style={{ margin: '0 6px 0 0', fontSize: 12 }}>
+              <Tag key={tag.id} className="mr-[6px] mb-0 mt-0 text-[12px]">
                 {tag.name}
               </Tag>
             ))}
           </div>
         )}
       </div>
-    </List.Item>
+    </div>
   );
 
   return (
     <>
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <Title level={4} style={{ margin: 0, fontWeight: 600 }}>Events</Title>
+        <div className="flex justify-between items-center mb-5">
+          <Title level={4} className="m-0 font-semibold">Events</Title>
           {isAuthenticated && (
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => navigate('/events/new')}
-              style={{ borderRadius: 6 }}
+              className="rounded-md"
             >
               New Event
             </Button>
@@ -157,21 +142,10 @@ export function EventListPage(): ReactNode {
         </div>
 
         {/* Filters */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 10,
-            marginBottom: 20,
-            padding: '14px 16px',
-            background: '#fff',
-            border: '1px solid #eee',
-            borderRadius: 8,
-          }}
-        >
+        <div className="flex flex-wrap gap-[10px] mb-5 px-4 py-[14px] bg-white border border-[#eee] rounded-lg">
           <Input
             placeholder="Search events..."
-            prefix={<SearchOutlined style={{ color: '#bbb' }} />}
+            prefix={<SearchOutlined className="text-[#bbb]" />}
             allowClear
             style={{ width: 220 }}
             onChange={(e) => {
@@ -227,17 +201,14 @@ export function EventListPage(): ReactNode {
           </Select>
         </div>
 
-        {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 16 }} />}
+        {error && <Alert message={error} type="error" showIcon className="mb-4" />}
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 48 }}>
+          <div className="text-center py-12">
             <Spin size="large" />
           </div>
         ) : events.length === 0 ? (
-          <Empty
-            description="No events found"
-            style={{ padding: 48 }}
-          >
+          <Empty description="No events found" className="py-12">
             {isAuthenticated && (
               <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/events/new')}>
                 Create Your First Event
@@ -246,12 +217,10 @@ export function EventListPage(): ReactNode {
           </Empty>
         ) : (
           <>
-            <List
-              dataSource={events}
-              renderItem={renderEventCard}
-              split={false}
-            />
-            <div style={{ textAlign: 'center', marginTop: 24 }}>
+            <div>
+              {events.map(renderEventCard)}
+            </div>
+            <div className="text-center mt-6">
               <Pagination
                 current={pagination.page}
                 pageSize={pagination.limit}

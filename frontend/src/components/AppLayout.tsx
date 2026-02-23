@@ -38,27 +38,11 @@ export function AppLayout(): ReactNode {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#fafafa' }}>
-      <Header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 32px',
-          background: '#fff',
-          borderBottom: '1px solid #eee',
-          height: 56,
-          lineHeight: '56px',
-        }}
-      >
+    <Layout className="min-h-screen !bg-white">
+      <Header className="flex items-center justify-between px-8 border-b border-[#eee] h-14 leading-[56px] !bg-white">
         <Text
           strong
-          style={{
-            fontSize: 16,
-            cursor: 'pointer',
-            color: '#1a1a1a',
-            letterSpacing: '-0.3px',
-          }}
+          className="text-base cursor-pointer text-[#1a1a1a] tracking-tight"
           onClick={() => navigate('/events')}
         >
           EventPlanner
@@ -75,7 +59,7 @@ export function AppLayout(): ReactNode {
                   type="text"
                   size="small"
                   icon={<UserOutlined />}
-                  style={{ color: '#555' }}
+                  className="text-[#555]"
                 >
                   {user?.name}
                 </Button>
@@ -87,7 +71,7 @@ export function AppLayout(): ReactNode {
                 type="text"
                 size="small"
                 onClick={() => navigate('/login')}
-                style={{ color: '#555' }}
+                className="text-[#555]"
               >
                 Log in
               </Button>
@@ -95,7 +79,7 @@ export function AppLayout(): ReactNode {
                 type="primary"
                 size="small"
                 onClick={() => navigate('/signup')}
-                style={{ borderRadius: 6 }}
+                className="rounded-md"
               >
                 Sign up
               </Button>
@@ -104,8 +88,8 @@ export function AppLayout(): ReactNode {
         </Space>
       </Header>
 
-      <Content style={{ flex: 1, background: '#fafafa' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 32px' }}>
+      <Content className="flex-1 bg-white">
+        <div className="max-w-[1200px] mx-auto px-8 py-6">
           <Outlet />
         </div>
       </Content>

@@ -38,54 +38,30 @@ export function LoginPage(): ReactNode {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="flex min-h-screen">
       {/* Left - Image */}
       <div
-        style={{
-          flex: 1,
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'flex-end',
-          padding: 40,
-          backgroundImage: `url(${celebrationBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+        className="flex-1 relative flex items-end p-10 bg-cover bg-center"
+        style={{ backgroundImage: `url(${celebrationBg})` }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background:
-              'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.02) 100%)',
-          }}
-        />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 420 }}>
-          <Title level={3} style={{ color: '#fff', margin: 0, fontWeight: 600, lineHeight: 1.3 }}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
+        <div className="relative z-10 max-w-[420px]">
+          <Title level={3} className="text-white m-0 font-semibold leading-snug">
             Plan events that matter.
           </Title>
-          <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 15, marginTop: 8, display: 'block' }}>
+          <Text className="text-white/75 text-[15px] mt-2 block">
             Organize, discover, and manage events effortlessly.
           </Text>
         </div>
       </div>
 
       {/* Right - Form */}
-      <div
-        style={{
-          width: 460,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '48px 52px',
-          background: '#fff',
-        }}
-      >
-        <div style={{ marginBottom: 36 }}>
-          <Text strong style={{ fontSize: 13, color: '#888', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      <div className="w-[460px] flex flex-col justify-center px-[52px] py-12 bg-white">
+        <div className="mb-9">
+          <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
             Welcome back
           </Text>
-          <Title level={3} style={{ margin: '8px 0 0', fontWeight: 600 }}>
+          <Title level={3} className="mt-2 mb-0 font-semibold">
             Sign in to your account
           </Title>
         </div>
@@ -106,38 +82,44 @@ export function LoginPage(): ReactNode {
             ]}
           >
             <Input
-              prefix={<MailOutlined style={{ color: '#bfbfbf' }} />}
+              prefix={<MailOutlined className="text-[#bfbfbf]" />}
               placeholder="you@example.com"
             />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="Password"
+            label={
+              <div className="flex justify-between w-full">
+                Password
+              </div>
+            }
             rules={[{ required: true, message: 'Please enter your password' }]}
           >
             <Input.Password
-              prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
+              prefix={<LockOutlined className="text-[#bfbfbf]" />}
               placeholder="Enter your password"
             />
           </Form.Item>
-
-          <Form.Item style={{ marginTop: 12 }}>
+          <Link to="/forgot-password" className="font-normal text-sm mb-3 block">
+            Forgot password?
+          </Link>
+          <Form.Item className="mt-10">
             <Button
               type="primary"
               htmlType="submit"
               loading={loading}
               block
-              style={{ height: 44, fontWeight: 500 }}
+              className="h-11 font-medium"
             >
               Sign In
             </Button>
           </Form.Item>
         </Form>
 
-        <Text type="secondary" style={{ textAlign: 'center', display: 'block', marginTop: 12 }}>
+        <Text type="secondary" className="text-center block mt-3">
           Don&apos;t have an account?{' '}
-          <Link to="/signup" style={{ fontWeight: 500 }}>Create one</Link>
+          <Link to="/signup" className="font-medium">Create one</Link>
         </Text>
       </div>
     </div>

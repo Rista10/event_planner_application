@@ -108,7 +108,7 @@ export function EventDetailPage(): ReactNode {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 48 }}>
+      <div className="text-center py-12">
         <Spin size="large" />
       </div>
     );
@@ -128,23 +128,16 @@ export function EventDetailPage(): ReactNode {
           type="text"
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate('/events')}
-          style={{ marginBottom: 16, padding: '4px 0', color: '#666' }}
+          className="mb-4 px-0 text-[#666]"
         >
           Back to Events
         </Button>
 
-        <div
-          style={{
-            background: '#fff',
-            border: '1px solid #eee',
-            borderRadius: 8,
-            padding: '28px 32px',
-          }}
-        >
+        <div className="bg-white border border-[#eee] rounded-lg p-[28px_32px]">
           {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-            <div style={{ flex: 1 }}>
-              <Space size={8} style={{ marginBottom: 8 }}>
+          <div className="flex justify-between items-start mb-5">
+            <div className="flex-1">
+              <Space size={8} className="mb-2">
                 {event.is_public ? (
                   <Tag color="green">Public</Tag>
                 ) : (
@@ -156,7 +149,7 @@ export function EventDetailPage(): ReactNode {
                   <Tag>Past</Tag>
                 )}
               </Space>
-              <Title level={3} style={{ margin: 0, fontWeight: 600 }}>
+              <Title level={3} className="m-0 font-semibold">
                 {event.title}
               </Title>
             </div>
@@ -166,7 +159,7 @@ export function EventDetailPage(): ReactNode {
                 <Button
                   icon={<EditOutlined />}
                   onClick={() => navigate(`/events/${event.id}/edit`)}
-                  style={{ borderRadius: 6 }}
+                  className="rounded-md"
                 >
                   Edit
                 </Button>
@@ -174,7 +167,7 @@ export function EventDetailPage(): ReactNode {
                   danger
                   icon={<DeleteOutlined />}
                   onClick={handleDelete}
-                  style={{ borderRadius: 6 }}
+                  className="rounded-md"
                 >
                   Delete
                 </Button>
@@ -184,54 +177,51 @@ export function EventDetailPage(): ReactNode {
 
           {/* Description */}
           {event.description && (
-            <Paragraph style={{ fontSize: 15, color: '#555', marginBottom: 24, lineHeight: 1.7 }}>
+            <Paragraph className="text-[15px] text-[#555] mb-6 leading-relaxed">
               {event.description}
             </Paragraph>
           )}
 
           {/* Meta */}
           <div
+            className="grid gap-4 py-5 border-t border-[#f0f0f0]"
             style={{
-              display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: 16,
-              padding: '20px 0',
-              borderTop: '1px solid #f0f0f0',
               borderBottom: event.tags.length > 0 ? '1px solid #f0f0f0' : 'none',
             }}
           >
             <div>
-              <Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                <CalendarOutlined style={{ marginRight: 6 }} />
-                Date & Time
+              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                <CalendarOutlined className="mr-1.5" />
+                Date &amp; Time
               </Text>
-              <div style={{ marginTop: 4, fontWeight: 500 }}>{formatDate(event.date_time)}</div>
+              <div className="mt-1 font-medium">{formatDate(event.date_time)}</div>
             </div>
             <div>
-              <Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                <EnvironmentOutlined style={{ marginRight: 6 }} />
+              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                <EnvironmentOutlined className="mr-1.5" />
                 Location
               </Text>
-              <div style={{ marginTop: 4, fontWeight: 500 }}>{event.location || 'Not specified'}</div>
+              <div className="mt-1 font-medium">{event.location || 'Not specified'}</div>
             </div>
             <div>
-              <Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                <UserOutlined style={{ marginRight: 6 }} />
+              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                <UserOutlined className="mr-1.5" />
                 Organizer
               </Text>
-              <div style={{ marginTop: 4, fontWeight: 500 }}>{event.creator_name}</div>
+              <div className="mt-1 font-medium">{event.creator_name}</div>
             </div>
           </div>
 
           {/* Tags */}
           {event.tags.length > 0 && (
-            <div style={{ paddingTop: 16 }}>
-              <Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', marginBottom: 8 }}>
+            <div className="pt-4">
+              <Text type="secondary" className="text-xs uppercase tracking-[0.5px] block mb-2">
                 Tags
               </Text>
               <Space wrap>
                 {event.tags.map((tag) => (
-                  <Tag key={tag.id} style={{ fontSize: 13 }}>
+                  <Tag key={tag.id} className="text-[13px]">
                     {tag.name}
                   </Tag>
                 ))}
