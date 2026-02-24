@@ -5,7 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { resetPasswordApi } from '../../services/auth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
-import celebrationBg from '../../assets/celebration-background.jpg';
+import celebrationBg from '../../assets/event-planner.jpg';
 
 const { Title, Text } = Typography;
 
@@ -77,7 +77,10 @@ export function ResetPasswordPage(): ReactNode {
 
     return (
       <>
-        <div className="mb-9">
+         <div className="mb-8 relative">
+            <div className="flex justify-end mb-6 text-2xl font-semibold text-black">
+              Event<span className="text-blue-500">Planner</span>
+            </div>
           <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
             Reset password
           </Text>
@@ -132,7 +135,7 @@ export function ResetPasswordPage(): ReactNode {
             />
           </Form.Item>
 
-          <Form.Item className="mt-3">
+          <Form.Item className="mt-6 mb-0">
             <Button
               type="primary"
               htmlType="submit"
@@ -145,9 +148,11 @@ export function ResetPasswordPage(): ReactNode {
           </Form.Item>
         </Form>
 
-        <Text type="secondary" className="text-center block mt-3">
+        <Text type="secondary" className="text-center block mt-6">
           Remember your password?{' '}
-          <Link to="/login" className="font-medium">Sign in</Link>
+          <Link to="/login" className="font-medium">
+            Sign in
+          </Link>
         </Text>
       </>
     );
@@ -206,28 +211,30 @@ export function ResetPasswordPage(): ReactNode {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left - Image */}
-      <div
-        className="flex-1 relative flex items-end p-10 bg-cover bg-center"
-        style={{ backgroundImage: `url(${celebrationBg})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
-        <div className="relative z-10 max-w-[420px]">
-          <Title level={3} className="text-white m-0 font-semibold leading-snug">
-            {status === 'success' ? 'All set!' : 'Create new password'}
-          </Title>
-          <Text className="text-white/75 text-[15px] mt-2 block">
-            {status === 'success'
-              ? 'Your password has been updated successfully.'
-              : 'Choose a strong password for your account.'}
-          </Text>
+    <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
+      <div className="w-full max-w-[1400px] min-h-[600px] lg:min-h-[700px] bg-white rounded-2xl shadow-lg flex flex-col lg:flex-row overflow-hidden">
+        {/* Left - Image */}
+        <div
+          className="hidden lg:flex lg:flex-[1.5] relative items-end p-10 bg-cover bg-center"
+          style={{ backgroundImage: `url(${celebrationBg})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
+          <div className="relative z-10 max-w-[420px]">
+            <Title level={3} className="!text-white m-0 font-semibold leading-snug">
+              {status === 'success' ? 'All set!' : 'Create new password'}
+            </Title>
+            <Text className="!text-white/75 text-[15px] mt-2 block">
+              {status === 'success'
+                ? 'Your password has been updated successfully.'
+                : 'Choose a strong password for your account.'}
+            </Text>
+          </div>
         </div>
-      </div>
 
-      {/* Right - Content */}
-      <div className="w-[460px] flex flex-col justify-center px-[52px] py-12 bg-white">
-        {renderContent()}
+        {/* Right - Content */}
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-10 lg:py-12">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

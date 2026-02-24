@@ -14,6 +14,7 @@ import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { EventListPage } from './modules/events/EventListPage';
 import { EventDetailPage } from './modules/events/components/EventDetailPage';
+import { NotFoundPage } from './modules/common/NotFoundPage';
 
 function App() {
   return (
@@ -51,6 +52,8 @@ function App() {
                   } />
                   <Route path="/events/:id" element={<EventDetailPage />} />
                 </Route>
+
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </BrowserRouter>
           </AntApp>

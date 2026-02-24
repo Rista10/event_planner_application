@@ -54,14 +54,14 @@ export function AppLayout(): ReactNode {
 
   return (
     <Layout className="min-h-screen !bg-white">
-      <Header className="flex items-center justify-between px-8 border-b border-[#eee] h-14 leading-[56px] !bg-white">
-        <Text
-          strong
-          className="text-base cursor-pointer text-[#1a1a1a] tracking-tight"
+      <Header className="flex items-center justify-between px-8 border-b border-[#eee] !h-20 !leading-[64px] !bg-white">
+          <Text
+            strong
+          className="!text-2xl cursor-pointer text-[#1a1a1a] tracking-tight"
           onClick={() => navigate('/events')}
-        >
-          EventPlanner
-        </Text>
+          >
+            Event<span className="text-blue-500">Planner</span>
+          </Text>
 
         <Space size={8}>
           {isAuthenticated ? (
@@ -72,7 +72,7 @@ export function AppLayout(): ReactNode {
               >
                 <Button
                   type="text"
-                  size="small"
+                  size="large"
                   icon={<UserOutlined />}
                   className="text-[#555]"
                 >
@@ -84,7 +84,7 @@ export function AppLayout(): ReactNode {
             <>
               <Button
                 type="text"
-                size="small"
+                size="large"
                 onClick={() => navigate('/login')}
                 className="text-[#555]"
               >
@@ -92,7 +92,7 @@ export function AppLayout(): ReactNode {
               </Button>
               <Button
                 type="primary"
-                size="small"
+                size="large"
                 onClick={() => navigate('/signup')}
                 className="rounded-md"
               >
@@ -104,7 +104,7 @@ export function AppLayout(): ReactNode {
       </Header>
 
       <Content className="flex-1 bg-white">
-        <div className="max-w-[1200px] mx-auto px-8 py-6">
+        <div className="max-w-[1400px] mx-auto px-8 py-6">
           <Outlet />
         </div>
       </Content>

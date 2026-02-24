@@ -24,6 +24,7 @@ import type { EventItem } from '../../../types/events';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../../types/api';
 import { EventFormDrawer } from './EventFormDrawer';
+import { RsvpSection } from './RsvpSection';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -31,7 +32,7 @@ export function EventDetailPage(): ReactNode {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { message } = App.useApp();
   const [event, setEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -229,6 +230,8 @@ export function EventDetailPage(): ReactNode {
             </div>
           )}
         </div>
+
+        <RsvpSection eventId={event.id} isAuthenticated={isAuthenticated} isUpcoming={isUpcoming} isOwner={isOwner} />
       </div>
 
       <EventFormDrawer

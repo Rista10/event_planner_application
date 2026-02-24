@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
-import celebrationBg from '../../assets/celebration-background.jpg';
+import celebrationBg from '../../assets/event-planner.jpg';
 
 const { Title, Text } = Typography;
 
@@ -61,76 +61,77 @@ export function Verify2FAPage(): ReactNode {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left - Image */}
-      <div
-        className="flex-1 relative flex items-end p-10 bg-cover bg-center"
-        style={{ backgroundImage: `url(${celebrationBg})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
-        <div className="relative z-10 max-w-[420px]">
-          <Title level={3} className="text-white m-0 font-semibold leading-snug">
-            Secure your account.
-          </Title>
-          <Text className="text-white/75 text-[15px] mt-2 block">
-            Two-factor authentication adds an extra layer of security.
-          </Text>
-        </div>
-      </div>
-
-      {/* Right - Form */}
-      <div className="w-[460px] flex flex-col justify-center px-[52px] py-12 bg-white">
-        <div className="mb-9">
-          <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
-            Verification Required
-          </Text>
-          <Title level={3} className="mt-2 mb-0 font-semibold">
-            Enter verification code
-          </Title>
-          <Text type="secondary" className="block mt-2">
-            Please enter the 6-digit code sent to your email.
-          </Text>
-        </div>
-
-        <Form<Verify2FAForm>
-          layout="vertical"
-          onFinish={handleSubmit}
-          autoComplete="off"
-          requiredMark={false}
-          size="large"
+    <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
+      <div className="w-full max-w-[1400px] min-h-[600px] lg:min-h-[700px] bg-white rounded-2xl shadow-lg flex flex-col lg:flex-row overflow-hidden">
+        {/* Left - Image */}
+        <div
+          className="hidden lg:flex lg:flex-[1.5] relative items-end p-10 bg-cover bg-center"
+          style={{ backgroundImage: `url(${celebrationBg})` }}
         >
-          <Form.Item
-            name="otp"
-            rules={[
-              { required: true, message: 'Please enter the verification code' },
-              { len: 6, message: 'Code must be 6 digits' },
-            ]}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
+          <div className="relative z-10 max-w-[420px]">
+            <Title level={3} className="!text-white m-0 font-semibold leading-snug">
+              Secure your account.
+            </Title>
+            <Text className="!text-white/75 text-[15px] mt-2 block">
+              Two-factor authentication adds an extra layer of security.
+            </Text>
+          </div>
+        </div>
+
+        {/* Right - Form */}
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-10 lg:py-12">
+           <div className="mb-8 relative">
+            <div className="flex justify-end mb-6 text-2xl font-semibold text-black">
+              Event<span className="text-blue-500">Planner</span>
+            </div>
+            <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
+              Verification Required
+            </Text>
+            <Title level={3} className="mt-2 mb-0 font-semibold">
+              Enter verification code
+            </Title>
+            <Text type="secondary" className="block mt-2">
+              Please enter the 6-digit code sent to your email.
+            </Text>
+          </div>
+
+          <Form<Verify2FAForm>
+            layout="vertical"
+            onFinish={handleSubmit}
+            autoComplete="off"
+            requiredMark={false}
+            size="large"
           >
-            <Input.OTP
-              length={6}
-              formatter={(str) => str.replace(/\D/g, '')}
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item className="mt-10">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
-              className="h-11 font-medium"
+            <Form.Item
+              name="otp"
+              rules={[
+                { required: true, message: 'Please enter the verification code' },
+                { len: 6, message: 'Code must be 6 digits' },
+              ]}
             >
-              Verify
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input.OTP length={6} formatter={(str) => str.replace(/\D/g, '')} size="large" />
+            </Form.Item>
 
-        <Text type="secondary" className="text-center block mt-3">
-          <Link to="/login" onClick={handleBackToLogin} className="font-medium">
-            Back to login
-          </Link>
-        </Text>
+            <Form.Item className="mt-10 mb-0">
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                block
+                className="h-11 font-medium"
+              >
+                Verify
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <Text type="secondary" className="text-center block mt-6">
+            <Link to="/login" onClick={handleBackToLogin} className="font-medium">
+              Back to login
+            </Link>
+          </Text>
+        </div>
       </div>
     </div>
   );
