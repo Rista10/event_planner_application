@@ -6,14 +6,20 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import type { User, LoginRequest, SignupRequest } from '../types/auth.ts'
-import { loginApi, signupApi, logoutApi, refreshTokenApi } from '../services/auth.ts';
+import type { User, LoginRequest, SignupRequest, Verify2FARequest } from '../types/auth.ts'
+import { loginApi, signupApi, logoutApi, refreshTokenApi, verify2FAApi } from '../services/auth.ts';
+
+interface LoginResult {
+  requires2FA: boolean;
+  userId?: string;
+}
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<LoginResult>;
+  verify2FA: (data: Verify2FARequest) => Promise<void>;
   signup: (data: SignupRequest) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -46,8 +52,22 @@ export function AuthProvider({ children }: AuthProviderProps): ReactNode {
     }
   }, []);
 
-  const login = useCallback(async (data: LoginRequest): Promise<void> => {
+  const login = useCallback(async (data: LoginRequest): Promise<LoginResult> => {
     const result = await loginApi(data);
+    if (result.requiresTwoFactor && result.userId) {
+      sessionStorage.setItem('pending2FAUserId', result.userId);
+      return { requires2FA: true, userId: result.userId };
+    }
+    if (result.accessToken && result.user) {
+      sessionStorage.setItem('accessToken', result.accessToken);
+      setUser(result.user);
+    }
+    return { requires2FA: false };
+  }, []);
+
+  const verify2FA = useCallback(async (data: Verify2FARequest): Promise<void> => {
+    const result = await verify2FAApi(data);
+    sessionStorage.removeItem('pending2FAUserId');
     sessionStorage.setItem('accessToken', result.accessToken);
     setUser(result.user);
   }, []);
@@ -71,6 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps): ReactNode {
         isAuthenticated: !!user,
         isLoading,
         login,
+        verify2FA,
         signup,
         logout,
       }}

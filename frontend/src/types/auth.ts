@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  twoFactorEnabled?: boolean;
 }
 
 export interface LoginRequest {
@@ -39,4 +40,20 @@ export interface ForgotPasswordRequest {
 export interface ResetPasswordRequest {
   token: string;
   newPassword: string;
+}
+
+export interface LoginResponse {
+  user?: User;
+  accessToken?: string;
+  requiresTwoFactor?: boolean;
+  userId?: string;
+}
+
+export interface Verify2FARequest {
+  userId: string;
+  otp: string;
+}
+
+export interface Toggle2FARequest {
+  enable: boolean;
 }

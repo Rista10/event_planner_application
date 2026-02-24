@@ -8,6 +8,7 @@ import { CheckEmailPage } from './modules/auth/CheckEmailPage';
 import { VerifyEmailPage } from './modules/auth/VerifyEmailPage';
 import { ForgotPasswordPage } from './modules/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './modules/auth/ResetPasswordPage';
+import { Verify2FAPage } from './modules/auth/Verify2FAPage';
 import { AuthProvider } from './hooks/useAuth';
 import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/verify-2fa" element={<Verify2FAPage />} />
 
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<Navigate to="/events" replace />} />

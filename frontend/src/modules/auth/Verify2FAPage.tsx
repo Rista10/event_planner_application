@@ -1,38 +1,48 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useState, useEffect, useRef } from 'react';
 import { Form, Input, Button, Typography, App } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import type { LoginRequest } from '../../types/auth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
 import celebrationBg from '../../assets/celebration-background.jpg';
 
 const { Title, Text } = Typography;
 
-export function LoginPage(): ReactNode {
+interface Verify2FAForm {
+  otp: string;
+}
+
+export function Verify2FAPage(): ReactNode {
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { verify2FA } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { message } = App.useApp();
+  const verifiedRef = useRef(false);
 
+  const userId = sessionStorage.getItem('pending2FAUserId');
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
-  const handleSubmit = async (values: LoginRequest): Promise<void> => {
+  useEffect(() => {
+    if (!userId && !verifiedRef.current) {
+      navigate('/login', { replace: true });
+    }
+  }, [userId, navigate]);
+
+  const handleSubmit = async (values: Verify2FAForm): Promise<void> => {
+    if (!userId) return;
+
     setLoading(true);
     try {
-      const result = await login(values);
-      if (result.requires2FA) {
-        navigate('/verify-2fa', { state: { from: { pathname: from } } });
-      } else {
-        message.success('Login successful');
-        navigate(from, { replace: true });
-      }
+      verifiedRef.current = true;
+      await verify2FA({ userId, otp: values.otp });
+      message.success('Login successful');
+      navigate(from, { replace: true });
     } catch (error) {
+      verifiedRef.current = false;
       if (error instanceof AxiosError && error.response?.data) {
         const apiError = error.response.data as ApiErrorResponse;
-        message.error(apiError.error?.message || 'Login failed');
+        message.error(apiError.error?.message || 'Invalid verification code');
       } else {
         message.error('An unexpected error occurred');
       }
@@ -40,6 +50,15 @@ export function LoginPage(): ReactNode {
       setLoading(false);
     }
   };
+
+  const handleBackToLogin = (): void => {
+    sessionStorage.removeItem('pending2FAUserId');
+    navigate('/login');
+  };
+
+  if (!userId) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -51,10 +70,10 @@ export function LoginPage(): ReactNode {
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
         <div className="relative z-10 max-w-[420px]">
           <Title level={3} className="text-white m-0 font-semibold leading-snug">
-            Plan events that matter.
+            Secure your account.
           </Title>
           <Text className="text-white/75 text-[15px] mt-2 block">
-            Organize, discover, and manage events effortlessly.
+            Two-factor authentication adds an extra layer of security.
           </Text>
         </div>
       </div>
@@ -63,14 +82,17 @@ export function LoginPage(): ReactNode {
       <div className="w-[460px] flex flex-col justify-center px-[52px] py-12 bg-white">
         <div className="mb-9">
           <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
-            Welcome back
+            Verification Required
           </Text>
           <Title level={3} className="mt-2 mb-0 font-semibold">
-            Sign in to your account
+            Enter verification code
           </Title>
+          <Text type="secondary" className="block mt-2">
+            Please enter the 6-digit code sent to your email.
+          </Text>
         </div>
 
-        <Form<LoginRequest>
+        <Form<Verify2FAForm>
           layout="vertical"
           onFinish={handleSubmit}
           autoComplete="off"
@@ -78,36 +100,19 @@ export function LoginPage(): ReactNode {
           size="large"
         >
           <Form.Item
-            name="email"
-            label="Email"
+            name="otp"
             rules={[
-              { required: true, message: 'Please enter your email' },
-              { type: 'email', message: 'Please enter a valid email' },
+              { required: true, message: 'Please enter the verification code' },
+              { len: 6, message: 'Code must be 6 digits' },
             ]}
           >
-            <Input
-              prefix={<MailOutlined className="text-[#bfbfbf]" />}
-              placeholder="you@example.com"
+            <Input.OTP
+              length={6}
+              formatter={(str) => str.replace(/\D/g, '')}
+              size="large"
             />
           </Form.Item>
 
-          <Form.Item
-            name="password"
-            label={
-              <div className="flex justify-between w-full">
-                Password
-              </div>
-            }
-            rules={[{ required: true, message: 'Please enter your password' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined className="text-[#bfbfbf]" />}
-              placeholder="Enter your password"
-            />
-          </Form.Item>
-          <Link to="/forgot-password" className="font-normal text-sm mb-3 block">
-            Forgot password?
-          </Link>
           <Form.Item className="mt-10">
             <Button
               type="primary"
@@ -116,14 +121,15 @@ export function LoginPage(): ReactNode {
               block
               className="h-11 font-medium"
             >
-              Sign In
+              Verify
             </Button>
           </Form.Item>
         </Form>
 
         <Text type="secondary" className="text-center block mt-3">
-          Don&apos;t have an account?{' '}
-          <Link to="/signup" className="font-medium">Create one</Link>
+          <Link to="/login" onClick={handleBackToLogin} className="font-medium">
+            Back to login
+          </Link>
         </Text>
       </div>
     </div>

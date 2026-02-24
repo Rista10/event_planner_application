@@ -1,11 +1,13 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState, useEffect } from 'react';
 import { Layout, Button, Dropdown, Space, Typography } from 'antd';
 import {
   UserOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  SafetyOutlined,
 } from '@ant-design/icons';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { TwoFactorSettingsModal } from './TwoFactorSettingsModal';
 import type { MenuProps } from 'antd';
 
 const { Header, Content } = Layout;
@@ -14,6 +16,12 @@ const { Text } = Typography;
 export function AppLayout(): ReactNode {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [securityModalOpen, setSecurityModalOpen] = useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(user?.twoFactorEnabled ?? false);
+
+  useEffect(() => {
+    setTwoFactorEnabled(user?.twoFactorEnabled ?? false);
+  }, [user?.twoFactorEnabled]);
 
   const userMenuItems: MenuProps['items'] = [
     {
@@ -21,6 +29,11 @@ export function AppLayout(): ReactNode {
       icon: <UserOutlined />,
       label: user?.name || 'Profile',
       disabled: true,
+    },
+    {
+      key: 'security',
+      icon: <SafetyOutlined />,
+      label: 'Security',
     },
     { type: 'divider' },
     {
@@ -34,6 +47,8 @@ export function AppLayout(): ReactNode {
   const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === 'logout') {
       logout().then(() => navigate('/login'));
+    } else if (key === 'security') {
+      setSecurityModalOpen(true);
     }
   };
 
@@ -93,6 +108,13 @@ export function AppLayout(): ReactNode {
           <Outlet />
         </div>
       </Content>
+
+      <TwoFactorSettingsModal
+        open={securityModalOpen}
+        onClose={() => setSecurityModalOpen(false)}
+        is2FAEnabled={twoFactorEnabled}
+        onToggle={setTwoFactorEnabled}
+      />
     </Layout>
   );
 }
