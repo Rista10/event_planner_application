@@ -5,7 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { verifyEmailApi } from '../../services/auth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
-import celebrationBg from '../../assets/event-planner.jpg';
+import { AuthPageLayout, AuthBrandHeader } from '../../components/auth/AuthPageLayout';
 
 const { Title, Text } = Typography;
 
@@ -60,7 +60,7 @@ export function VerifyEmailPage(): ReactNode {
       return (
         <>
           <Result
-            icon={<CheckCircleOutlined className="text-[#52c41a] text-[64px]" />}
+            icon={<CheckCircleOutlined className="text-success text-[64px]" />}
             title="Email verified!"
             subTitle="Your email has been verified successfully. You can now sign in to your account."
             className="p-0"
@@ -79,7 +79,7 @@ export function VerifyEmailPage(): ReactNode {
     return (
       <>
         <Result
-          icon={<CloseCircleOutlined className="text-[#ff4d4f] text-[64px]" />}
+          icon={<CloseCircleOutlined className="text-error text-[64px]" />}
           title="Verification failed"
           subTitle={errorMessage}
           className="p-0"
@@ -101,36 +101,16 @@ export function VerifyEmailPage(): ReactNode {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
-      <div className="w-full max-w-[1400px] min-h-[600px] lg:min-h-[700px] bg-white rounded-2xl shadow-lg flex flex-col lg:flex-row overflow-hidden">
-        {/* Left - Image */}
-        <div
-          className="hidden lg:flex lg:flex-[1.5] relative items-end p-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${celebrationBg})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
-          <div className="relative z-10 max-w-[420px]">
-            <Title level={3} className="!text-white m-0 font-semibold leading-snug">
-              {status === 'success' ? 'Welcome aboard!' : 'Email verification'}
-            </Title>
-            <Text className="!text-white/75 text-[15px] mt-2 block">
-              {status === 'success'
-                ? 'Your account is ready. Start planning amazing events!'
-                : 'Confirming your email address...'}
-            </Text>
-          </div>
-        </div>
-
-        {/* Right - Content */}
-        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-10 lg:py-12">
-           <div className="mb-8 relative">
-            <div className="flex justify-end mb-6 text-2xl font-semibold text-black">
-              Event<span className="text-blue-500">Planner</span>
-            </div>
-            </div>
-          {renderContent()}
-        </div>
-      </div>
-    </div>
+    <AuthPageLayout
+      heroTitle={status === 'success' ? 'Welcome aboard!' : 'Email verification'}
+      heroSubtitle={
+        status === 'success'
+          ? 'Your account is ready. Start planning amazing events!'
+          : 'Confirming your email address...'
+      }
+    >
+      <AuthBrandHeader />
+      {renderContent()}
+    </AuthPageLayout>
   );
 }

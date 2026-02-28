@@ -22,14 +22,21 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Auth endpoints that should not trigger token refresh
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/signup', '/auth/verify-2fa', '/auth/refresh'];
+
 // Response interceptor — handle errors globally
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+        const requestUrl = originalRequest?.url || '';
 
-        // Handle 401 — attempt token refresh
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Skip token refresh for auth endpoints - let the error propagate
+        const isAuthEndpoint = AUTH_ENDPOINTS.some(endpoint => requestUrl.includes(endpoint));
+
+        // Handle 401 — attempt token refresh (only for non-auth endpoints)
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
             originalRequest._retry = true;
 
             try {

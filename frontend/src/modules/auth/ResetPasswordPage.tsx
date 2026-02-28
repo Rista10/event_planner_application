@@ -5,9 +5,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { resetPasswordApi } from '../../services/auth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
-import celebrationBg from '../../assets/event-planner.jpg';
+import { AuthPageLayout, AuthHeader } from '../../components/auth/AuthPageLayout';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface ResetPasswordFormValues {
   newPassword: string;
@@ -59,7 +59,7 @@ export function ResetPasswordPage(): ReactNode {
       return (
         <>
           <Result
-            icon={<CloseCircleOutlined className="text-[#ff4d4f] text-[64px]" />}
+            icon={<CloseCircleOutlined className="text-error text-[64px]" />}
             title="Invalid reset link"
             subTitle="This password reset link is invalid. Please request a new one."
             className="p-0"
@@ -77,20 +77,11 @@ export function ResetPasswordPage(): ReactNode {
 
     return (
       <>
-         <div className="mb-8 relative">
-            <div className="flex justify-end mb-6 text-2xl font-semibold text-black">
-              Event<span className="text-blue-500">Planner</span>
-            </div>
-          <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
-            Reset password
-          </Text>
-          <Title level={3} className="mt-2 mb-0 font-semibold">
-            Create new password
-          </Title>
-          <Text type="secondary" className="block mt-2">
-            Enter a new password for your account.
-          </Text>
-        </div>
+        <AuthHeader
+          subtitle="Reset password"
+          title="Create new password"
+          description="Enter a new password for your account."
+        />
 
         <Form<ResetPasswordFormValues>
           layout="vertical"
@@ -108,7 +99,7 @@ export function ResetPasswordPage(): ReactNode {
             ]}
           >
             <Input.Password
-              prefix={<LockOutlined className="text-[#bfbfbf]" />}
+              prefix={<LockOutlined className="text-text-placeholder" />}
               placeholder="Min. 8 characters"
             />
           </Form.Item>
@@ -130,19 +121,13 @@ export function ResetPasswordPage(): ReactNode {
             ]}
           >
             <Input.Password
-              prefix={<LockOutlined className="text-[#bfbfbf]" />}
+              prefix={<LockOutlined className="text-text-placeholder" />}
               placeholder="Repeat your new password"
             />
           </Form.Item>
 
           <Form.Item className="mt-6 mb-0">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
-              className="h-11 font-medium"
-            >
+            <Button type="primary" htmlType="submit" loading={loading} block className="h-11 font-medium">
               Reset password
             </Button>
           </Form.Item>
@@ -161,7 +146,7 @@ export function ResetPasswordPage(): ReactNode {
   const renderSuccess = (): ReactNode => (
     <>
       <Result
-        icon={<CheckCircleOutlined className="text-[#52c41a] text-[64px]" />}
+        icon={<CheckCircleOutlined className="text-success text-[64px]" />}
         title="Password reset successful!"
         subTitle="Your password has been reset successfully. You can now sign in with your new password."
         className="p-0"
@@ -179,7 +164,7 @@ export function ResetPasswordPage(): ReactNode {
   const renderError = (): ReactNode => (
     <>
       <Result
-        icon={<CloseCircleOutlined className="text-[#ff4d4f] text-[64px]" />}
+        icon={<CloseCircleOutlined className="text-error text-[64px]" />}
         title="Reset failed"
         subTitle={errorMessage}
         className="p-0"
@@ -211,31 +196,15 @@ export function ResetPasswordPage(): ReactNode {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
-      <div className="w-full max-w-[1400px] min-h-[600px] lg:min-h-[700px] bg-white rounded-2xl shadow-lg flex flex-col lg:flex-row overflow-hidden">
-        {/* Left - Image */}
-        <div
-          className="hidden lg:flex lg:flex-[1.5] relative items-end p-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${celebrationBg})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
-          <div className="relative z-10 max-w-[420px]">
-            <Title level={3} className="!text-white m-0 font-semibold leading-snug">
-              {status === 'success' ? 'All set!' : 'Create new password'}
-            </Title>
-            <Text className="!text-white/75 text-[15px] mt-2 block">
-              {status === 'success'
-                ? 'Your password has been updated successfully.'
-                : 'Choose a strong password for your account.'}
-            </Text>
-          </div>
-        </div>
-
-        {/* Right - Content */}
-        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-10 lg:py-12">
-          {renderContent()}
-        </div>
-      </div>
-    </div>
+    <AuthPageLayout
+      heroTitle={status === 'success' ? 'All set!' : 'Create new password'}
+      heroSubtitle={
+        status === 'success'
+          ? 'Your password has been updated successfully.'
+          : 'Choose a strong password for your account.'
+      }
+    >
+      {renderContent()}
+    </AuthPageLayout>
   );
 }

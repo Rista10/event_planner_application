@@ -58,7 +58,7 @@ export async function sendVerificationEmail(
         <p>Thank you for signing up. Please verify your email address by clicking the button below:</p>
         <p style="margin: 30px 0;">
           <a href="${verificationUrl}"
-             style="background-color: #4F46E5; color: white; padding: 12px 24px;
+             style="background-color: #1677FF; color: white; padding: 12px 24px;
                     text-decoration: none; border-radius: 6px; display: inline-block;">
             Verify Email
           </a>
@@ -87,7 +87,7 @@ export async function sendPasswordResetEmail(
         <p>We received a request to reset your password. Click the button below to create a new password:</p>
         <p style="margin: 30px 0;">
           <a href="${resetUrl}"
-             style="background-color: #4F46E5; color: white; padding: 12px 24px;
+             style="background-color: #1677FF; color: white; padding: 12px 24px;
                     text-decoration: none; border-radius: 6px; display: inline-block;">
             Reset Password
           </a>
@@ -113,7 +113,7 @@ export async function sendTwoFactorOtpEmail(
         <h2>Hello, ${name}</h2>
         <p>Your verification code for logging in is:</p>
         <p style="font-size: 32px; font-weight: bold; letter-spacing: 8px;
-                  color: #4F46E5; margin: 30px 0; text-align: center;">
+                  color: #1677FF; margin: 30px 0; text-align: center;">
           ${otp}
         </p>
         <p style="color: #9CA3AF; font-size: 14px; margin-top: 30px;">

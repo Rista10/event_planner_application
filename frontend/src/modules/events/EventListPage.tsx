@@ -60,11 +60,22 @@ export function EventListPage(): ReactNode {
 
   const isUpcoming = (dateStr: string): boolean => new Date(dateStr) >= new Date();
 
+  const handleCardKeyDown = (event: React.KeyboardEvent, eventId: string): void => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate(`/events/${eventId}`);
+    }
+  };
+
   const renderEventCard = (event: EventItem): ReactNode => (
     <div key={event.id} className="py-[6px] px-0">
       <div
+        role="button"
+        tabIndex={0}
         onClick={() => navigate(`/events/${event.id}`)}
-        className="w-full px-5 py-4 bg-white border border-[#eee] rounded-lg cursor-pointer transition-colors duration-200 hover:border-[#d0d0d0]"
+        onKeyDown={(e) => handleCardKeyDown(e, event.id)}
+        aria-label={`View event: ${event.title}, ${formatDate(event.date_time)}${event.location ? `, at ${event.location}` : ''}`}
+        className="w-full px-5 py-4 bg-white border border-border-light rounded-lg cursor-pointer transition-colors duration-200 hover:border-border-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1 min-w-0">
@@ -72,10 +83,7 @@ export function EventListPage(): ReactNode {
               {event.title}
             </Text>
             {event.description && (
-              <Paragraph
-                ellipsis={{ rows: 1 }}
-                className="m-0 mb-2 text-[#888] text-[13px]"
-              >
+              <Paragraph ellipsis={{ rows: 1 }} className="m-0 mb-2 text-text-muted text-[13px]">
                 {event.description}
               </Paragraph>
             )}
@@ -142,12 +150,12 @@ export function EventListPage(): ReactNode {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-[10px] mb-5 px-4 py-[14px] bg-white border border-[#eee] rounded-lg">
+        <div className="flex flex-wrap justify-end gap-[10px] mb-5 px-4 py-[14px] bg-white">
           <Input
             placeholder="Search events..."
-            prefix={<SearchOutlined className="text-[#bbb]" />}
+            prefix={<SearchOutlined className="text-text-placeholder" />}
             allowClear
-            style={{ width: 220 }}
+            className="w-[220px]"
             onChange={(e) => {
               const value = e.target.value;
               setTimeout(() => setFilters({ ...filters, search: value || undefined }), 300);
@@ -157,7 +165,7 @@ export function EventListPage(): ReactNode {
           <Select
             placeholder="Filter by tag"
             allowClear
-            style={{ width: 160 }}
+            className="w-[160px]"
             onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
           >
             {tags.map((tag) => (
@@ -183,7 +191,7 @@ export function EventListPage(): ReactNode {
 
           <Select
             defaultValue="date_time"
-            style={{ width: 130 }}
+            className="w-[130px]"
             onChange={(value: string) => setPagination({ sortBy: value })}
           >
             <Option value="date_time">By Date</Option>
@@ -193,7 +201,7 @@ export function EventListPage(): ReactNode {
 
           <Select
             defaultValue="asc"
-            style={{ width: 120 }}
+            className="w-[120px]"
             onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
           >
             <Option value="asc">Ascending</Option>
@@ -220,7 +228,7 @@ export function EventListPage(): ReactNode {
             <div>
               {events.map(renderEventCard)}
             </div>
-            <div className="text-center mt-6">
+            <div className="flex justify-end mt-6">
               <Pagination
                 current={pagination.page}
                 pageSize={pagination.limit}

@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { forgotPasswordApi } from '../../services/auth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
-import celebrationBg from '../../assets/event-planner.jpg';
+import { AuthPageLayout, AuthHeader } from '../../components/auth/AuthPageLayout';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface ForgotPasswordFormValues {
   email: string;
@@ -39,20 +39,11 @@ export function ForgotPasswordPage(): ReactNode {
 
   const renderForm = (): ReactNode => (
     <>
-       <div className="mb-8 relative">
-            <div className="flex justify-end mb-6 text-2xl font-semibold text-black">
-              Event<span className="text-blue-500">Planner</span>
-            </div>
-        <Text strong className="text-[13px] text-[#888] tracking-[0.5px] uppercase">
-          Forgot password
-        </Text>
-        <Title level={3} className="mt-2 mb-0 font-semibold">
-          Reset your password
-        </Title>
-        <Text type="secondary" className="block mt-2">
-          Enter your email address and we'll send you a link to reset your password.
-        </Text>
-      </div>
+      <AuthHeader
+        subtitle="Forgot password"
+        title="Reset your password"
+        description="Enter your email address and we'll send you a link to reset your password."
+      />
 
       <Form<ForgotPasswordFormValues>
         layout="vertical"
@@ -70,19 +61,13 @@ export function ForgotPasswordPage(): ReactNode {
           ]}
         >
           <Input
-            prefix={<MailOutlined className="text-[#bfbfbf]" />}
+            prefix={<MailOutlined className="text-text-placeholder" />}
             placeholder="you@example.com"
           />
         </Form.Item>
 
         <Form.Item className="mt-6 mb-0">
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            block
-            className="h-11 font-medium"
-          >
+          <Button type="primary" htmlType="submit" loading={loading} block className="h-11 font-medium">
             Send reset link
           </Button>
         </Form.Item>
@@ -100,7 +85,7 @@ export function ForgotPasswordPage(): ReactNode {
   const renderSuccess = (): ReactNode => (
     <>
       <Result
-        icon={<MailOutlined className="text-[#1677ff] text-[64px]" />}
+        icon={<MailOutlined className="text-primary text-[64px]" />}
         title="Check your email"
         subTitle={
           <>
@@ -126,31 +111,15 @@ export function ForgotPasswordPage(): ReactNode {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
-      <div className="w-full max-w-[1400px] min-h-[600px] lg:min-h-[700px] bg-white rounded-2xl shadow-lg flex flex-col lg:flex-row overflow-hidden">
-        {/* Left - Image */}
-        <div
-          className="hidden lg:flex lg:flex-[1.5] relative items-end p-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${celebrationBg})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[.08] to-black/[.02]" />
-          <div className="relative z-10 max-w-[420px]">
-            <Title level={3} className="!text-white m-0 font-semibold leading-snug">
-              {submitted ? 'Check your inbox' : 'Forgot your password?'}
-            </Title>
-            <Text className="!text-white/75 text-[15px] mt-2 block">
-              {submitted
-                ? 'Follow the link in your email to reset your password.'
-                : 'No worries, we help you get back into your account.'}
-            </Text>
-          </div>
-        </div>
-
-        {/* Right - Content */}
-        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-10 lg:py-12">
-          {submitted ? renderSuccess() : renderForm()}
-        </div>
-      </div>
-    </div>
+    <AuthPageLayout
+      heroTitle={submitted ? 'Check your inbox' : 'Forgot your password?'}
+      heroSubtitle={
+        submitted
+          ? 'Follow the link in your email to reset your password.'
+          : 'No worries, we help you get back into your account.'
+      }
+    >
+      {submitted ? renderSuccess() : renderForm()}
+    </AuthPageLayout>
   );
 }

@@ -231,7 +231,9 @@ export function EventDetailPage(): ReactNode {
           )}
         </div>
 
-        <RsvpSection eventId={event.id} isAuthenticated={isAuthenticated} isUpcoming={isUpcoming} isOwner={isOwner} />
+        <div className="max-w-sm">
+          <RsvpSection eventId={event.id} isAuthenticated={isAuthenticated} isUpcoming={isUpcoming} isOwner={isOwner} />
+        </div>
       </div>
 
       <EventFormDrawer
