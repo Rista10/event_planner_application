@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../types/api';
 import { AuthPageLayout, AuthHeader } from '../../components/auth/AuthPageLayout';
-import { tokenManager } from '../../services/tokenManager';
+
 
 const { Text } = Typography;
 
@@ -21,7 +21,7 @@ export function Verify2FAPage(): ReactNode {
   const { message } = App.useApp();
   const verifiedRef = useRef(false);
 
-  const userId = tokenManager.getPending2FAUserId();
+  const userId = sessionStorage.getItem('pending2FAUserId');
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export function Verify2FAPage(): ReactNode {
   };
 
   const handleBackToLogin = (): void => {
-    tokenManager.clearPending2FAUserId();
+    sessionStorage.removeItem('pending2FAUserId');
     navigate('/login');
   };
 
