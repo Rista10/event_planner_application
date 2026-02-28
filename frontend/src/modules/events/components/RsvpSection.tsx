@@ -71,7 +71,7 @@ export function RsvpSection({ eventId, isAuthenticated, isUpcoming, isOwner }: R
   };
 
   return (
-    <div className="bg-white border border-[#eee] rounded-lg p-6 mt-4">
+    <div className="bg-white border border-[#eee] rounded-lg p-6 ">
       <div className="flex items-center gap-2 mb-4">
         <TeamOutlined className="text-lg" />
         <Text strong className="text-base">

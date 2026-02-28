@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import {
   Tag,
   Space,
@@ -19,6 +19,7 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { FilterOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEvents } from '../../hooks/useEvent';
 import { useTags } from '../../hooks/useTags';
@@ -38,6 +39,7 @@ export function EventListPage(): ReactNode {
   const { tags } = useTags();
 
   const drawerOpen = location.pathname === '/events/new';
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const handleDrawerClose = (): void => {
     navigate('/events');
@@ -120,9 +122,9 @@ export function EventListPage(): ReactNode {
         </div>
 
         {event.tags.length > 0 && (
-          <div className="mt-[10px]">
+          <div className="mt-[10px] flex flex-wrap gap-2">
             {event.tags.map((tag) => (
-              <Tag key={tag.id} className="mr-[6px] mb-0 mt-0 text-[12px]">
+              <Tag key={tag.id} className="m-0 text-[12px]">
                 {tag.name}
               </Tag>
             ))}
@@ -150,63 +152,126 @@ export function EventListPage(): ReactNode {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap justify-end gap-[10px] mb-5 px-4 py-[14px] bg-white">
-          <Input
-            placeholder="Search events..."
-            prefix={<SearchOutlined className="text-text-placeholder" />}
-            allowClear
-            className="w-[220px]"
-            onChange={(e) => {
-              const value = e.target.value;
-              setTimeout(() => setFilters({ ...filters, search: value || undefined }), 300);
-            }}
-          />
+        <div className="mb-5 px-4 py-[14px] bg-white rounded-lg">
+          <div className="flex gap-[10px] items-center">
+            <Input
+              placeholder="Search events..."
+              prefix={<SearchOutlined className="text-text-placeholder" />}
+              allowClear
+              className="flex-1"
+              onChange={(e) => {
+                const value = e.target.value;
+                setTimeout(() => setFilters({ ...filters, search: value || undefined }), 300);
+              }}
+            />
+            <Button
+              icon={<FilterOutlined />}
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              className="sm:hidden"
+              type={filtersOpen ? 'primary' : 'default'}
+            >
+              Filters
+            </Button>
+            {/* Desktop filters - always visible */}
+            <div className="hidden sm:flex sm:flex-wrap gap-[10px]">
+              <Select
+                placeholder="Filter by tag"
+                allowClear
+                className="w-[160px]"
+                onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
+              >
+                {tags.map((tag) => (
+                  <Option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </Option>
+                ))}
+              </Select>
 
-          <Select
-            placeholder="Filter by tag"
-            allowClear
-            className="w-[160px]"
-            onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
-          >
-            {tags.map((tag) => (
-              <Option key={tag.id} value={tag.id}>
-                {tag.name}
-              </Option>
-            ))}
-          </Select>
+              <Segmented
+                options={[
+                  { label: 'All', value: 'all' },
+                  { label: 'Upcoming', value: 'upcoming' },
+                  { label: 'Past', value: 'past' },
+                ]}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    time_filter: value === 'all' ? undefined : (value as 'upcoming' | 'past'),
+                  })
+                }
+              />
 
-          <Segmented
-            options={[
-              { label: 'All', value: 'all' },
-              { label: 'Upcoming', value: 'upcoming' },
-              { label: 'Past', value: 'past' },
-            ]}
-            onChange={(value) =>
-              setFilters({
-                ...filters,
-                time_filter: value === 'all' ? undefined : (value as 'upcoming' | 'past'),
-              })
-            }
-          />
+              <Select
+                defaultValue="date_time"
+                className="w-[130px]"
+                onChange={(value: string) => setPagination({ sortBy: value })}
+              >
+                <Option value="date_time">By Date</Option>
+                <Option value="created_at">By Created</Option>
+                <Option value="title">By Title</Option>
+              </Select>
 
-          <Select
-            defaultValue="date_time"
-            className="w-[130px]"
-            onChange={(value: string) => setPagination({ sortBy: value })}
-          >
-            <Option value="date_time">By Date</Option>
-            <Option value="created_at">By Created</Option>
-            <Option value="title">By Title</Option>
-          </Select>
+              <Select
+                defaultValue="asc"
+                className="w-[120px]"
+                onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
+              >
+                <Option value="asc">Ascending</Option>
+                <Option value="desc">Descending</Option>
+              </Select>
+            </div>
+          </div>
 
-          <Select
-            defaultValue="asc"
-            className="w-[120px]"
-            onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
-          >
-            <Option value="asc">Ascending</Option>
-            <Option value="desc">Descending</Option>
-          </Select>
+          {/* Mobile filters - collapsible */}
+          {filtersOpen && (
+            <div className="sm:hidden mt-3 pt-3 border-t border-[#f0f0f0] grid grid-cols-2 gap-[10px]">
+              <Select
+                placeholder="Filter by tag"
+                allowClear
+                className="col-span-2"
+                onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
+              >
+                {tags.map((tag) => (
+                  <Option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </Option>
+                ))}
+              </Select>
+
+              <Segmented
+                className="col-span-2"
+                block
+                options={[
+                  { label: 'All', value: 'all' },
+                  { label: 'Upcoming', value: 'upcoming' },
+                  { label: 'Past', value: 'past' },
+                ]}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    time_filter: value === 'all' ? undefined : (value as 'upcoming' | 'past'),
+                  })
+                }
+              />
+
+              <Select
+                defaultValue="date_time"
+                onChange={(value: string) => setPagination({ sortBy: value })}
+              >
+                <Option value="date_time">By Date</Option>
+                <Option value="created_at">By Created</Option>
+                <Option value="title">By Title</Option>
+              </Select>
+
+              <Select
+                defaultValue="asc"
+                onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
+              >
+                <Option value="asc">Ascending</Option>
+                <Option value="desc">Descending</Option>
+              </Select>
+            </div>
+          )}
         </div>
 
         {error && <Alert message={error} type="error" showIcon className="mb-4" />}

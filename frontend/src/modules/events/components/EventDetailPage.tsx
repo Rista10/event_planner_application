@@ -134,105 +134,107 @@ export function EventDetailPage(): ReactNode {
           Back to Events
         </Button>
 
-        <div className="bg-white border border-[#eee] rounded-lg p-[28px_32px]">
-          {/* Header */}
-          <div className="flex justify-between items-start mb-5">
-            <div className="flex-1">
-              <Space size={8} className="mb-2">
-                {event.is_public ? (
-                  <Tag color="green">Public</Tag>
-                ) : (
-                  <Tag color="orange">Private</Tag>
-                )}
-                {isUpcoming ? (
-                  <Tag color="blue">Upcoming</Tag>
-                ) : (
-                  <Tag>Past</Tag>
-                )}
-              </Space>
-              <Title level={3} className="m-0 font-semibold">
-                {event.title}
-              </Title>
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          <div className="flex-1 min-w-0 w-full bg-white border border-[#eee] rounded-lg p-5 sm:p-[28px_32px]">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-5">
+              <div className="flex-1">
+                <Space size={8} className="mb-2">
+                  {event.is_public ? (
+                    <Tag color="green">Public</Tag>
+                  ) : (
+                    <Tag color="orange">Private</Tag>
+                  )}
+                  {isUpcoming ? (
+                    <Tag color="blue">Upcoming</Tag>
+                  ) : (
+                    <Tag>Past</Tag>
+                  )}
+                </Space>
+                <Title level={3} className="m-0 font-semibold">
+                  {event.title}
+                </Title>
+              </div>
+
+              {isOwner && (
+                <Space size={8}>
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => navigate(`/events/${event.id}/edit`)}
+                    className="rounded-md"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={handleDelete}
+                    className="rounded-md"
+                  >
+                    Delete
+                  </Button>
+                </Space>
+              )}
             </div>
 
-            {isOwner && (
-              <Space size={8}>
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => navigate(`/events/${event.id}/edit`)}
-                  className="rounded-md"
-                >
-                  Edit
-                </Button>
-                <Button
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={handleDelete}
-                  className="rounded-md"
-                >
-                  Delete
-                </Button>
-              </Space>
+            {/* Description */}
+            {event.description && (
+              <Paragraph className="text-[15px] text-[#555] mb-6 leading-relaxed">
+                {event.description}
+              </Paragraph>
+            )}
+
+            {/* Meta */}
+            <div
+              className="grid gap-4 py-5 border-t border-[#f0f0f0]"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                borderBottom: event.tags.length > 0 ? '1px solid #f0f0f0' : 'none',
+              }}
+            >
+              <div>
+                <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                  <CalendarOutlined className="mr-1.5" />
+                  Date &amp; Time
+                </Text>
+                <div className="mt-1 font-medium">{formatDate(event.date_time)}</div>
+              </div>
+              <div>
+                <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                  <EnvironmentOutlined className="mr-1.5" />
+                  Location
+                </Text>
+                <div className="mt-1 font-medium">{event.location || 'Not specified'}</div>
+              </div>
+              <div>
+                <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
+                  <UserOutlined className="mr-1.5" />
+                  Organizer
+                </Text>
+                <div className="mt-1 font-medium">{event.creator_name}</div>
+              </div>
+            </div>
+
+            {/* Tags */}
+            {event.tags.length > 0 && (
+              <div className="pt-4">
+                <Text type="secondary" className="text-xs uppercase tracking-[0.5px] block mb-2">
+                  Tags
+                </Text>
+                <Space wrap>
+                  {event.tags.map((tag) => (
+                    <Tag key={tag.id} className="text-[13px]">
+                      {tag.name}
+                    </Tag>
+                  ))}
+                </Space>
+              </div>
             )}
           </div>
 
-          {/* Description */}
-          {event.description && (
-            <Paragraph className="text-[15px] text-[#555] mb-6 leading-relaxed">
-              {event.description}
-            </Paragraph>
-          )}
-
-          {/* Meta */}
-          <div
-            className="grid gap-4 py-5 border-t border-[#f0f0f0]"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              borderBottom: event.tags.length > 0 ? '1px solid #f0f0f0' : 'none',
-            }}
-          >
-            <div>
-              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
-                <CalendarOutlined className="mr-1.5" />
-                Date &amp; Time
-              </Text>
-              <div className="mt-1 font-medium">{formatDate(event.date_time)}</div>
-            </div>
-            <div>
-              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
-                <EnvironmentOutlined className="mr-1.5" />
-                Location
-              </Text>
-              <div className="mt-1 font-medium">{event.location || 'Not specified'}</div>
-            </div>
-            <div>
-              <Text type="secondary" className="text-xs uppercase tracking-[0.5px]">
-                <UserOutlined className="mr-1.5" />
-                Organizer
-              </Text>
-              <div className="mt-1 font-medium">{event.creator_name}</div>
-            </div>
+          <div className="w-full lg:w-[360px] shrink-0">
+            <RsvpSection eventId={event.id} isAuthenticated={isAuthenticated} isUpcoming={isUpcoming} isOwner={isOwner} />
           </div>
-
-          {/* Tags */}
-          {event.tags.length > 0 && (
-            <div className="pt-4">
-              <Text type="secondary" className="text-xs uppercase tracking-[0.5px] block mb-2">
-                Tags
-              </Text>
-              <Space wrap>
-                {event.tags.map((tag) => (
-                  <Tag key={tag.id} className="text-[13px]">
-                    {tag.name}
-                  </Tag>
-                ))}
-              </Space>
-            </div>
-          )}
-        </div>
-
-        <div className="max-w-sm">
-          <RsvpSection eventId={event.id} isAuthenticated={isAuthenticated} isUpcoming={isUpcoming} isOwner={isOwner} />
         </div>
       </div>
 

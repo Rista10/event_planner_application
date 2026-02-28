@@ -21,14 +21,14 @@ export function useEvents(): UseEventsReturn {
     items: [],
     total: 0,
     page: 1,
-    limit: 10,
+    limit: 5,
     totalPages: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPaginationState] = useState<PaginationParams>({
     page: 1,
-    limit: 10,
+    limit: 5,
     sortBy: 'date_time',
     order: 'asc',
   });
