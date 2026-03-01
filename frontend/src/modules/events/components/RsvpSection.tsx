@@ -1,12 +1,14 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Typography, Button, Space, Spin, Alert, App } from 'antd';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   QuestionCircleOutlined,
   TeamOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
 import { useRsvp } from '../../../hooks/useRsvp';
+import { exportGuestList } from '../../../services/rsvp';
 import type { RsvpResponse } from '../../../types/rsvp';
 
 const { Text } = Typography;
@@ -24,6 +26,7 @@ export function RsvpSection({ eventId, isAuthenticated, isUpcoming, isOwner }: R
     isAuthenticated,
   );
   const { message } = App.useApp();
+  const [exporting, setExporting] = useState(false);
 
   const handleRsvp = async (response: RsvpResponse): Promise<void> => {
     try {
@@ -40,6 +43,18 @@ export function RsvpSection({ eventId, isAuthenticated, isUpcoming, isOwner }: R
       message.success('RSVP cancelled');
     } catch {
       message.error('Failed to cancel RSVP');
+    }
+  };
+
+  const handleExport = async (): Promise<void> => {
+    try {
+      setExporting(true);
+      await exportGuestList(eventId);
+      message.success('Guest list exported successfully');
+    } catch {
+      message.error('Failed to export guest list');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -116,8 +131,19 @@ export function RsvpSection({ eventId, isAuthenticated, isUpcoming, isOwner }: R
         <Alert message="Please log in to RSVP for this event" type="info" showIcon />
       )}
 
-      {isAuthenticated && isUpcoming && isOwner && (
-        <Alert message="You are the organizer of this event" type="info" showIcon />
+      {isAuthenticated && isOwner && (
+        <div className="mb-4">
+          {summary && summary.total > 0 && (
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+              loading={exporting}
+              disabled={exporting}
+            >
+              Export Guest List
+            </Button>
+          )}
+        </div>
       )}
 
       {isAuthenticated && isUpcoming && !isOwner && (

@@ -31,3 +31,19 @@ export async function getEventsAttending(
   );
   return response.data.data;
 }
+
+export async function exportGuestList(eventId: string): Promise<void> {
+  const response = await api.get(`/rsvps/event/${eventId}/export`, {
+    responseType: 'blob',
+  });
+
+  const blob = new Blob([response.data], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'guest-list.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}

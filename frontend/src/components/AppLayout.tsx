@@ -116,7 +116,7 @@ export function AppLayout(): ReactNode {
           <div className="hidden sm:flex gap-6 absolute left-1/2 -translate-x-1/2">
             <div
               onClick={() => navigate('/events')}
-              className={`flex items-center gap-2 cursor-pointer py-2 border-b-2 transition-colors ${
+              className={`flex items-center gap-2 cursor-pointer py-2 transition-colors ${
                 activeTab === 'events'
                   ? 'text-blue-500'
                   : 'border-transparent text-[#555] hover:text-blue-500'
@@ -127,7 +127,7 @@ export function AppLayout(): ReactNode {
             </div>
             <div
               onClick={() => navigate('/calendar')}
-              className={`flex items-center gap-2 cursor-pointer py-2 border-b-2 transition-colors ${
+              className={`flex items-center gap-2 cursor-pointer py-2 transition-colors ${
                 activeTab === 'calendar'
                   ? 'text-blue-500'
                   : 'border-transparent text-[#555] hover:text-blue-500'

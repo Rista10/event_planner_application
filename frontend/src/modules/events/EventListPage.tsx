@@ -242,7 +242,7 @@ export function EventListPage(): ReactNode {
 
           {/* Mobile filters - collapsible */}
           {filtersOpen && (
-            <div className="sm:hidden mt-3 pt-3 border-t border-[#f0f0f0] space-y-3">
+            <div className="sm:hidden mt-3 pt-3 border-t border-[#f0f0f0] !space-y-3">
               <Segmented
                 block
                 options={[

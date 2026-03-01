@@ -111,7 +111,6 @@ export function EventFormDrawer({ open, eventId, onClose, onSuccess }: EventForm
       size="large"
       onClose={handleClose}
       open={open}
-      destroyOnClose
       extra={
         <Button onClick={handleClose}>Cancel</Button>
       }
