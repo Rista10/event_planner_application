@@ -3,6 +3,7 @@ import { PaginatedResult, PaginationParams } from '../../shared/types/index.js';
 import * as rsvpRepository from './repository.js';
 import * as eventRepository from '../events/repository.js';
 import { RsvpRow, RsvpWithUser, RsvpResponse, RsvpSummary } from './types.js';
+import { EventWithTags } from '../events/types.js';
 
 export async function createOrUpdateRsvp(
   userId: string,
@@ -70,4 +71,18 @@ export async function cancelRsvp(userId: string, eventId: string): Promise<void>
   if (deleted === 0) {
     throw new AppError('RSVP not found', 404, 'RSVP_NOT_FOUND');
   }
+}
+
+export async function getEventsUserIsAttending(
+  userId: string,
+  pagination: PaginationParams,
+): Promise<PaginatedResult<EventWithTags>> {
+  const { items, total } = await rsvpRepository.findEventsUserIsAttending(userId, pagination);
+  return {
+    items,
+    total,
+    page: pagination.page,
+    limit: pagination.limit,
+    totalPages: Math.ceil(total / pagination.limit),
+  };
 }

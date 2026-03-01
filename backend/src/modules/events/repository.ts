@@ -8,6 +8,19 @@ import { PaginationParams } from '../../shared/types/index.js';
 const TABLE = 'events';
 
 function applyFilters(query: Knex.QueryBuilder, filters: EventFilters): Knex.QueryBuilder {
+  if (filters.my_events && filters.currentUserId) {
+    query.where('events.user_id', filters.currentUserId);
+  } else {
+    if (filters.currentUserId) {
+      query.where(function () {
+        this.where('events.is_public', true)
+          .orWhere('events.user_id', filters.currentUserId!);
+      });
+    } else {
+      query.where('events.is_public', true);
+    }
+  }
+
   if (filters.is_public !== undefined) {
     query.where('events.is_public', filters.is_public);
   }

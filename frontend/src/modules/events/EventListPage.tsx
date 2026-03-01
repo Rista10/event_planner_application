@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useState, useRef, useCallback } from 'react';
 import {
   Tag,
   Space,
@@ -40,6 +40,16 @@ export function EventListPage(): ReactNode {
 
   const drawerOpen = location.pathname === '/events/new';
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSearchChange = useCallback((value: string) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setFilters({ ...filters, search: value || undefined });
+    }, 300);
+  }, [filters, setFilters]);
 
   const handleDrawerClose = (): void => {
     navigate('/events');
@@ -152,41 +162,28 @@ export function EventListPage(): ReactNode {
         </div>
 
         {/* Filters */}
-        <div className="mb-5 px-4 py-[14px] bg-white rounded-lg">
-          <div className="flex gap-[10px] items-center">
+        <div className="mb-5 px-4 py-[14px] bg-white rounded-lg border border-[#f0f0f0]">
+          <div className="flex gap-3 items-center flex-wrap">
             <Input
               placeholder="Search events..."
               prefix={<SearchOutlined className="text-text-placeholder" />}
               allowClear
-              className="flex-1"
-              onChange={(e) => {
-                const value = e.target.value;
-                setTimeout(() => setFilters({ ...filters, search: value || undefined }), 300);
-              }}
+              className="flex-1 min-w-[200px]"
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
+
+            {/* Mobile filter toggle */}
             <Button
               icon={<FilterOutlined />}
               onClick={() => setFiltersOpen(!filtersOpen)}
-              className="sm:hidden"
+              className="sm:!hidden"
               type={filtersOpen ? 'primary' : 'default'}
             >
               Filters
             </Button>
-            {/* Desktop filters - always visible */}
-            <div className="hidden sm:flex sm:flex-wrap gap-[10px]">
-              <Select
-                placeholder="Filter by tag"
-                allowClear
-                className="w-[160px]"
-                onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
-              >
-                {tags.map((tag) => (
-                  <Option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </Option>
-                ))}
-              </Select>
 
+            {/* Desktop filters */}
+            <div className="hidden sm:flex items-center gap-3">
               <Segmented
                 options={[
                   { label: 'All', value: 'all' },
@@ -202,33 +199,9 @@ export function EventListPage(): ReactNode {
               />
 
               <Select
-                defaultValue="date_time"
-                className="w-[130px]"
-                onChange={(value: string) => setPagination({ sortBy: value })}
-              >
-                <Option value="date_time">By Date</Option>
-                <Option value="created_at">By Created</Option>
-                <Option value="title">By Title</Option>
-              </Select>
-
-              <Select
-                defaultValue="asc"
-                className="w-[120px]"
-                onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
-              >
-                <Option value="asc">Ascending</Option>
-                <Option value="desc">Descending</Option>
-              </Select>
-            </div>
-          </div>
-
-          {/* Mobile filters - collapsible */}
-          {filtersOpen && (
-            <div className="sm:hidden mt-3 pt-3 border-t border-[#f0f0f0] grid grid-cols-2 gap-[10px]">
-              <Select
-                placeholder="Filter by tag"
+                placeholder="Tag"
                 allowClear
-                className="col-span-2"
+                className="w-[120px]"
                 onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
               >
                 {tags.map((tag) => (
@@ -238,8 +211,39 @@ export function EventListPage(): ReactNode {
                 ))}
               </Select>
 
+              {isAuthenticated && (
+                <Select
+                  defaultValue="all"
+                  className="w-[130px]"
+                  onChange={(value: string) =>
+                    setFilters({ ...filters, my_events: value === 'my_events' ? true : undefined })
+                  }
+                >
+                  <Option value="all">All Events</Option>
+                  <Option value="my_events">My Events</Option>
+                </Select>
+              )}
+
+              <Select
+                defaultValue="date_time:asc"
+                className="w-[140px]"
+                onChange={(value: string) => {
+                  const [sortBy, order] = value.split(':');
+                  setPagination({ sortBy, order: order as 'asc' | 'desc' });
+                }}
+              >
+                <Option value="date_time:asc">Date ↑</Option>
+                <Option value="date_time:desc">Date ↓</Option>
+                <Option value="created_at:desc">Newest</Option>
+                <Option value="title:asc">Title A-Z</Option>
+              </Select>
+            </div>
+          </div>
+
+          {/* Mobile filters - collapsible */}
+          {filtersOpen && (
+            <div className="sm:hidden mt-3 pt-3 border-t border-[#f0f0f0] space-y-3">
               <Segmented
-                className="col-span-2"
                 block
                 options={[
                   { label: 'All', value: 'all' },
@@ -254,22 +258,63 @@ export function EventListPage(): ReactNode {
                 }
               />
 
-              <Select
-                defaultValue="date_time"
-                onChange={(value: string) => setPagination({ sortBy: value })}
-              >
-                <Option value="date_time">By Date</Option>
-                <Option value="created_at">By Created</Option>
-                <Option value="title">By Title</Option>
-              </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <Select
+                  placeholder="Tag"
+                  allowClear
+                  className="w-full"
+                  onChange={(value: string | undefined) => setFilters({ ...filters, tag_id: value })}
+                >
+                  {tags.map((tag) => (
+                    <Option key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </Option>
+                  ))}
+                </Select>
 
-              <Select
-                defaultValue="asc"
-                onChange={(value: 'asc' | 'desc') => setPagination({ order: value })}
-              >
-                <Option value="asc">Ascending</Option>
-                <Option value="desc">Descending</Option>
-              </Select>
+                {isAuthenticated ? (
+                  <Select
+                    defaultValue="all"
+                    className="w-full"
+                    onChange={(value: string) =>
+                      setFilters({ ...filters, my_events: value === 'my_events' ? true : undefined })
+                    }
+                  >
+                    <Option value="all">All Events</Option>
+                    <Option value="my_events">My Events</Option>
+                  </Select>
+                ) : (
+                  <Select
+                    defaultValue="date_time:asc"
+                    className="w-full"
+                    onChange={(value: string) => {
+                      const [sortBy, order] = value.split(':');
+                      setPagination({ sortBy, order: order as 'asc' | 'desc' });
+                    }}
+                  >
+                    <Option value="date_time:asc">Date ↑</Option>
+                    <Option value="date_time:desc">Date ↓</Option>
+                    <Option value="created_at:desc">Newest</Option>
+                    <Option value="title:asc">Title A-Z</Option>
+                  </Select>
+                )}
+              </div>
+
+              {isAuthenticated && (
+                <Select
+                  defaultValue="date_time:asc"
+                  className="w-full"
+                  onChange={(value: string) => {
+                    const [sortBy, order] = value.split(':');
+                    setPagination({ sortBy, order: order as 'asc' | 'desc' });
+                  }}
+                >
+                  <Option value="date_time:asc">Date ↑</Option>
+                  <Option value="date_time:desc">Date ↓</Option>
+                  <Option value="created_at:desc">Newest</Option>
+                  <Option value="title:asc">Title A-Z</Option>
+                </Select>
+              )}
             </div>
           )}
         </div>

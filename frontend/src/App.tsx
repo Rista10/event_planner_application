@@ -14,6 +14,7 @@ import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { EventListPage } from './modules/events/EventListPage';
 import { EventDetailPage } from './modules/events/components/EventDetailPage';
+import { CalendarPage } from './modules/calendar/CalendarPage';
 import { NotFoundPage } from './modules/common/NotFoundPage';
 
 function App() {
@@ -51,6 +52,9 @@ function App() {
                     <ProtectedRoute><EventDetailPage /></ProtectedRoute>
                   } />
                   <Route path="/events/:id" element={<EventDetailPage />} />
+                  <Route path="/calendar" element={
+                    <ProtectedRoute><CalendarPage /></ProtectedRoute>
+                  } />
                 </Route>
 
                 <Route path="*" element={<NotFoundPage />} />

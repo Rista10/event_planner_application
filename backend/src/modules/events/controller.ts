@@ -14,10 +14,11 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       throw new AppError(message, 400, 'VALIDATION_ERROR');
     }
 
-    const { page, limit, sortBy, order, tag_id, is_public, time_filter, search } = parsed.data;
+    const { page, limit, sortBy, order, tag_id, is_public, time_filter, search, my_events } = parsed.data;
+    const currentUserId = req.user?.id;
 
     const result = await eventService.listEvents(
-      { tag_id, is_public, time_filter, search },
+      { tag_id, is_public, time_filter, search, currentUserId, my_events },
       { page, limit, sortBy, order },
     );
 
@@ -39,7 +40,8 @@ export async function getById(req: Request, res: Response, next: NextFunction): 
     if (!id) {
       throw new AppError('Event ID is required', 400, 'VALIDATION_ERROR');
     }
-    const event = await eventService.getEventById(id);
+    const currentUserId = req.user?.id;
+    const event = await eventService.getEventById(id, currentUserId);
 
     const response: ApiSuccessResponse<EventWithTags> = {
       success: true,

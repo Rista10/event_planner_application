@@ -4,6 +4,7 @@ import * as rsvpService from './service.js';
 import { AppError } from '../../middleware/errorHandler.js';
 import { ApiSuccessResponse, PaginatedResult } from '../../shared/types/index.js';
 import { RsvpRow, RsvpWithUser, RsvpSummary } from './types.js';
+import { EventWithTags } from '../events/types.js';
 
 export async function createOrUpdate(
   req: Request,
@@ -124,6 +125,39 @@ export async function cancel(req: Request, res: Response, next: NextFunction): P
     const response: ApiSuccessResponse<{ message: string }> = {
       success: true,
       data: { message: 'RSVP cancelled successfully' },
+      error: null,
+    };
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getEventsAttending(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const parsed = rsvpQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      const message = parsed.error.issues.map((e) => e.message).join(', ');
+      throw new AppError(message, 400, 'VALIDATION_ERROR');
+    }
+
+    const userId = req.user!.id as string;
+    const { page, limit } = parsed.data;
+
+    const result = await rsvpService.getEventsUserIsAttending(userId, {
+      page,
+      limit,
+      sortBy: 'date_time',
+      order: 'asc',
+    });
+
+    const response: ApiSuccessResponse<PaginatedResult<EventWithTags>> = {
+      success: true,
+      data: result,
       error: null,
     };
     res.status(200).json(response);

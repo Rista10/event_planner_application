@@ -4,6 +4,8 @@ import { authenticate } from '../../middleware/auth.js';
 
 const router = Router();
 
+router.get('/me/attending', authenticate, rsvpController.getEventsAttending);
+
 router.post('/event/:eventId', authenticate, rsvpController.createOrUpdate);
 
 router.get('/event/:eventId/me', authenticate, rsvpController.getMyRsvp);

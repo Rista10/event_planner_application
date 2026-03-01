@@ -40,6 +40,8 @@ export interface EventFilters {
   is_public?: boolean;
   time_filter?: 'upcoming' | 'past';
   search?: string;
+  currentUserId?: string;
+  my_events?: boolean;
 }
 
 export interface EventQueryParams {

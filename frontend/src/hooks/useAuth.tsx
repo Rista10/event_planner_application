@@ -35,15 +35,15 @@ export function AuthProvider({ children }: AuthProviderProps): ReactNode {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       refreshTokenApi()
         .then((data) => {
-          sessionStorage.setItem('accessToken', data.accessToken);
+          localStorage.setItem('accessToken', data.accessToken);
           setUser(data.user);
         })
         .catch(() => {
-          sessionStorage.removeItem('accessToken');
+          localStorage.removeItem('accessToken');
           setUser(null);
         })
         .finally(() => setIsLoading(false));
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps): ReactNode {
       return { requires2FA: true, userId: result.userId };
     }
     if (result.accessToken && result.user) {
-      sessionStorage.setItem('accessToken', result.accessToken);
+      localStorage.setItem('accessToken', result.accessToken);
       setUser(result.user);
     }
     return { requires2FA: false };
@@ -68,19 +68,19 @@ export function AuthProvider({ children }: AuthProviderProps): ReactNode {
   const verify2FA = useCallback(async (data: Verify2FARequest): Promise<void> => {
     const result = await verify2FAApi(data);
     sessionStorage.removeItem('pending2FAUserId');
-    sessionStorage.setItem('accessToken', result.accessToken);
+    localStorage.setItem('accessToken', result.accessToken);
     setUser(result.user);
   }, []);
 
   const signup = useCallback(async (data: SignupRequest): Promise<void> => {
     const result = await signupApi(data);
-    sessionStorage.setItem('accessToken', result.accessToken);
+    localStorage.setItem('accessToken', result.accessToken);
     setUser(result.user);
   }, []);
 
   const logout = useCallback(async (): Promise<void> => {
     await logoutApi();
-    sessionStorage.removeItem('accessToken');
+    localStorage.removeItem('accessToken');
     setUser(null);
   }, []);
 

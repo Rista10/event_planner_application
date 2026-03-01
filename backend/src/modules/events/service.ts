@@ -19,11 +19,17 @@ export async function listEvents(
   };
 }
 
-export async function getEventById(id: string): Promise<EventWithTags> {
+export async function getEventById(id: string, currentUserId?: string): Promise<EventWithTags> {
   const event = await eventRepository.findById(id);
   if (!event) {
     throw new AppError('Event not found', 404, 'EVENT_NOT_FOUND');
   }
+
+  // Private events are only visible to their creators
+  if (!event.is_public && event.user_id !== currentUserId) {
+    throw new AppError('Event not found', 404, 'EVENT_NOT_FOUND');
+  }
+
   return event;
 }
 

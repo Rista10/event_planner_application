@@ -41,4 +41,5 @@ export interface EventFilters {
   is_public?: string;
   time_filter?: 'upcoming' | 'past';
   search?: string;
+  my_events?: boolean;
 }

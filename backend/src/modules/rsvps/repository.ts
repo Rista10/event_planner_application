@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import db from '../../config/db.js';
 import { RsvpRow, RsvpWithUser, RsvpResponse, RsvpSummary } from './types.js';
 import { PaginationParams } from '../../shared/types/index.js';
+import { EventRow, EventWithTags } from '../events/types.js';
+import { Tag } from '../tags/types.js';
 
 const TABLE = 'rsvps';
 
@@ -86,4 +88,65 @@ export async function findByUserId(userId: string): Promise<RsvpRow[]> {
 
 export async function deleteByEventAndUser(eventId: string, userId: string): Promise<number> {
   return db(TABLE).where('event_id', eventId).where('user_id', userId).del();
+}
+
+export async function findEventsUserIsAttending(
+  userId: string,
+  pagination: PaginationParams,
+): Promise<{ items: EventWithTags[]; total: number }> {
+  const [{ count }] = await db(TABLE)
+    .where('rsvps.user_id', userId)
+    .where('rsvps.response', 'YES')
+    .join('events', 'rsvps.event_id', 'events.id')
+    .count('* as count');
+  const total = Number(count);
+
+  if (total === 0) {
+    return { items: [], total: 0 };
+  }
+
+  // Get events with pagination
+  const eventRows = await db(TABLE)
+    .where('rsvps.user_id', userId)
+    .where('rsvps.response', 'YES')
+    .join('events', 'rsvps.event_id', 'events.id')
+    .select('events.*')
+    .orderBy(`events.${pagination.sortBy}`, pagination.order)
+    .limit(pagination.limit)
+    .offset((pagination.page - 1) * pagination.limit) as EventRow[];
+
+  const eventIds = eventRows.map((e) => e.id);
+  const tagRows = await db('event_tags')
+    .join('tags', 'event_tags.tag_id', 'tags.id')
+    .whereIn('event_tags.event_id', eventIds)
+    .select('event_tags.event_id', 'tags.id', 'tags.name', 'tags.created_at');
+
+  const tagMap = new Map<string, Tag[]>();
+  for (const row of tagRows) {
+    const eventId = row.event_id as string;
+    if (!tagMap.has(eventId)) {
+      tagMap.set(eventId, []);
+    }
+    tagMap.get(eventId)!.push({
+      id: row.id as string,
+      name: row.name as string,
+      created_at: row.created_at as Date,
+    });
+  }
+
+  // Attach creator names
+  const creatorIds = [...new Set(eventRows.map((e) => e.user_id))];
+  const users = await db('users').whereIn('id', creatorIds).select('id', 'name');
+  const userMap = new Map<string, string>();
+  for (const u of users) {
+    userMap.set(u.id as string, u.name as string);
+  }
+
+  const items: EventWithTags[] = eventRows.map((event) => ({
+    ...event,
+    tags: tagMap.get(event.id) || [],
+    creator_name: userMap.get(event.user_id) || 'Unknown',
+  }));
+
+  return { items, total };
 }

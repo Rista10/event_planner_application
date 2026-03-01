@@ -78,4 +78,8 @@ export const eventQuerySchema = z.object({
     .optional(),
   time_filter: z.enum(['upcoming', 'past']).optional(),
   search: z.string().max(255, 'Search query is too long').optional(),
+  my_events: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
 });
