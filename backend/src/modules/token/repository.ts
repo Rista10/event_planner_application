@@ -66,7 +66,3 @@ export async function invalidateAllByUserAndType(userId: string, type: TokenType
     .whereNull('used_at')
     .update({ used_at: new Date() });
 }
-
-export async function deleteExpired(): Promise<number> {
-  return db(TABLE).where('expires_at', '<', new Date()).del();
-}

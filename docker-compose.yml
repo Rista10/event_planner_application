@@ -36,6 +36,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    command: sh -c "npx knex migrate:latest --knexfile dist/knexfile.js && node dist/server.js"
     networks:
       - app-network
 

@@ -51,11 +51,6 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 const DEFAULT_ERROR_MESSAGE = 'An unexpected error occurred. Please try again.';
 
-export function getErrorMessage(code: string): string {
-  return ERROR_MESSAGES[code] || DEFAULT_ERROR_MESSAGE;
-}
-
-
 export function parseApiError(error: unknown): {
   code: string;
   message: string;
@@ -128,15 +123,4 @@ export function parseApiError(error: unknown): {
 export function handleApiError(error: unknown, fallbackMessage?: string): string {
   const { message } = parseApiError(error);
   return message || fallbackMessage || DEFAULT_ERROR_MESSAGE;
-}
-
-
-export function isErrorCode(error: unknown, code: string): boolean {
-  const { code: errorCode } = parseApiError(error);
-  return errorCode === code;
-}
-
-export function isAuthError(error: unknown): boolean {
-  const { code } = parseApiError(error);
-  return code === 'UNAUTHORIZED' || code === 'TOKEN_EXPIRED' || code === 'INVALID_TOKEN';
 }

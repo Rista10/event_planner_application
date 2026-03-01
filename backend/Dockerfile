@@ -8,9 +8,11 @@ RUN npm ci
 
 COPY tsconfig.json ./
 COPY src ./src
-COPY knexfile.ts ./
 
 RUN npm run build
+
+# Remove declaration files not needed at runtime (they cause Knex to crash)
+RUN find dist -name "*.d.ts" -delete && find dist -name "*.d.ts.map" -delete
 
 # ---- Production Stage ----
 FROM node:20-alpine AS production

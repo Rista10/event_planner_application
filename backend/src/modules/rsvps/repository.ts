@@ -82,10 +82,6 @@ export async function getSummaryByEventId(eventId: string): Promise<RsvpSummary>
   return summary;
 }
 
-export async function findByUserId(userId: string): Promise<RsvpRow[]> {
-  return db(TABLE).where('user_id', userId).orderBy('updated_at', 'desc');
-}
-
 export async function deleteByEventAndUser(eventId: string, userId: string): Promise<number> {
   return db(TABLE).where('event_id', eventId).where('user_id', userId).del();
 }

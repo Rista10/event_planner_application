@@ -20,15 +20,6 @@ const envSchema = z.object({
 
     BCRYPT_SALT_ROUNDS: z.coerce.number().default(10),
 
-    FEATURE_RSVP: z
-        .string()
-        .default('false')
-        .transform((val) => val === 'true'),
-    FEATURE_2FA: z
-        .string()
-        .default('false')
-        .transform((val) => val === 'true'),
-
     // Email configuration (optional - emails will be skipped if not configured)
     SMTP_USER: z.string().default(''),
     SMTP_PASS: z.string().default(''),
