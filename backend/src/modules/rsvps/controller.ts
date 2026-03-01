@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Parser } from 'json2csv';
 import { createOrUpdateRsvpSchema, rsvpQuerySchema } from './validation.js';
 import * as rsvpService from './service.js';
 import { AppError } from '../../middleware/errorHandler.js';
@@ -128,6 +129,33 @@ export async function cancel(req: Request, res: Response, next: NextFunction): P
       error: null,
     };
     res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function exportCsv(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const eventId = req.params.eventId as string;
+    if (!eventId) {
+      throw new AppError('Event ID is required', 400, 'VALIDATION_ERROR');
+    }
+
+    const userId = req.user!.id as string;
+    const rsvps = await rsvpService.getRsvpsForExport(userId, eventId);
+
+    const csvData = rsvps.map((rsvp) => ({
+      Name: rsvp.user_name,
+      Email: rsvp.user_email,
+      Response: rsvp.response,
+      Date: new Date(rsvp.created_at).toISOString().split('T')[0],
+    }));
+
+    const parser = new Parser({ fields: ['Name', 'Email', 'Response', 'Date'] });
+    const csv = parser.parse(csvData);
+
+    res.attachment('guest-list.csv');
+    res.status(200).send(csv);
   } catch (error) {
     next(error);
   }

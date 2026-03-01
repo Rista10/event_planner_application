@@ -90,6 +90,14 @@ export async function deleteByEventAndUser(eventId: string, userId: string): Pro
   return db(TABLE).where('event_id', eventId).where('user_id', userId).del();
 }
 
+export async function findAllByEventId(eventId: string): Promise<RsvpWithUser[]> {
+  return db(TABLE)
+    .join('users', 'rsvps.user_id', 'users.id')
+    .where('rsvps.event_id', eventId)
+    .select('rsvps.*', 'users.name as user_name', 'users.email as user_email')
+    .orderBy('rsvps.created_at', 'asc') as Promise<RsvpWithUser[]>;
+}
+
 export async function findEventsUserIsAttending(
   userId: string,
   pagination: PaginationParams,

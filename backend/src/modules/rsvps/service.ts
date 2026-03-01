@@ -73,6 +73,19 @@ export async function cancelRsvp(userId: string, eventId: string): Promise<void>
   }
 }
 
+export async function getRsvpsForExport(userId: string, eventId: string): Promise<RsvpWithUser[]> {
+  const event = await eventRepository.findById(eventId);
+  if (!event) {
+    throw new AppError('Event not found', 404, 'EVENT_NOT_FOUND');
+  }
+
+  if (event.user_id !== userId) {
+    throw new AppError('Only event owner can export RSVP list', 403, 'FORBIDDEN');
+  }
+
+  return rsvpRepository.findAllByEventId(eventId);
+}
+
 export async function getEventsUserIsAttending(
   userId: string,
   pagination: PaginationParams,
