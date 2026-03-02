@@ -19,10 +19,10 @@ export const signupSchema = z.object({
   email: z
     .string()
     .min(1, 'Please enter your email address')
+    .trim()
     .email('Please enter a valid email address')
     .max(255, 'Email is too long (max 255 characters)')
-    .toLowerCase()
-    .trim(),
+    .toLowerCase(),
   password: passwordSchema,
 });
 
@@ -30,9 +30,9 @@ export const loginSchema = z.object({
   email: z
     .string()
     .min(1, 'Please enter your email address')
+    .trim()
     .email('Please enter a valid email address')
-    .toLowerCase()
-    .trim(),
+    .toLowerCase(),
   password: z.string().min(1, 'Please enter your password'),
 });
 
@@ -44,18 +44,18 @@ export const resendVerificationSchema = z.object({
   email: z
     .string()
     .min(1, 'Please enter your email address')
-    .email('Please enter a valid email address')
-    .toLowerCase()
-    .trim(),
+    .trim()
+    .email()
+    .toLowerCase(),
 });
 
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
     .min(1, 'Please enter your email address')
+    .trim()
     .email('Please enter a valid email address')
-    .toLowerCase()
-    .trim(),
+    .toLowerCase(),
 });
 
 export const resetPasswordSchema = z.object({
