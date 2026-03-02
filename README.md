@@ -30,6 +30,7 @@ A full-stack event planning application featuring event management, RSVP functio
 - **Email Verification and Password Reset** — Verify user email addresses with token-based flow and forgot/reset password functionality
 - **Swagger Documentation** — Interactive API docs at `/api-docs`
 - **Refresh Token Rotation** — HTTP-only cookie storage with automatic refresh
+- **Unit Testing** — Implement unit tests for backend service (auth, events, rsvps, tags) and validation layers (auth). Validation tested specifically for Auth as it contains critical custom Zod schemas (e.g. password strength rules).
 
 ---
 
@@ -142,6 +143,9 @@ docker-compose up -d
 # (Optional) Seed the database with sample data
 docker exec event_planner_backend npx knex seed:run --knexfile dist/knexfile.js
 
+# Run unit tests
+npm run test
+
 # The application will be available at:
 # - Frontend: http://localhost:5173
 # - Backend API: http://localhost:3000
@@ -181,6 +185,9 @@ npm run seed
 
 # Start development server
 npm run dev
+
+# Run unit tests
+npm run test
 ```
 
 #### 3. Setup Frontend
